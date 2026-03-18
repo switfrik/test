@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>의료제품 설계서 운영관리 시스템</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body { background: #0F1C2E; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.login-wrap { width: 100%; max-width: 480px; padding: 24px; }
+.login-logo { text-align:center; margin-bottom:32px; }
+.login-logo .mark { width:52px;height:52px;background:var(--primary);border-radius:12px;
+  display:inline-flex;align-items:center;justify-content:center;font-size:26px;
+  box-shadow:0 4px 20px rgba(26,86,168,.5);margin-bottom:12px; }
+.login-logo h1 { font-size:18px;font-weight:700;color:#E5E7EB;line-height:1.4; }
+.login-logo p  { font-size:12px;color:#6B7280;margin-top:4px;font-family:'IBM Plex Mono',monospace; }
+.role-card {
+  background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:12px;padding:16px 20px;margin-bottom:10px;
+  display:flex;align-items:center;gap:14px;cursor:pointer;
+  text-decoration:none;transition:all .15s;
+}
+.role-card:hover { background:rgba(26,86,168,.2);border-color:var(--primary); }
+.role-icon  { font-size:24px;width:42px;height:42px;background:rgba(255,255,255,.08);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.role-info  { flex:1; }
+.role-name  { font-size:15px;font-weight:600;color:#E5E7EB; }
+.role-desc  { font-size:12px;color:#9CA3AF;margin-top:2px; }
+.role-arrow { color:#6B7280;font-size:16px; }
+.divider-text { text-align:center;font-size:11px;color:#4B5563;margin:16px 0;letter-spacing:.05em; }
+.version { text-align:center;font-size:11px;color:#4B5563;margin-top:20px;font-family:'IBM Plex Mono',monospace; }
+</style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-logo">
+    <div class="mark">⚕</div>
+    <h1>미충족의료수요 기반<br>의료제품 설계서 운영관리 시스템</h1>
+    <p>2026 범부처 사업 · 접속 역할 선택</p>
+  </div>
+
+  <div class="divider-text">역할별 포털 접속</div>
+
+  <a class="role-card" href="admin.html">
+    <div class="role-icon">🏛</div>
+    <div class="role-info">
+      <div class="role-name">범부처 관리자</div>
+      <div class="role-desc">전체 설계서 조회 · Stage 전환 승인 · 사용자 관리</div>
+    </div>
+    <div class="role-arrow">›</div>
+  </a>
+
+  <a class="role-card" href="kams.html">
+    <div class="role-icon">⚕</div>
+    <div class="role-info">
+      <div class="role-name">대한의학회</div>
+      <div class="role-desc">자문위원 관리 · S2 의견 조회 · 통합확정 · 재요청 발행</div>
+    </div>
+    <div class="role-arrow">›</div>
+  </a>
+
+  <a class="role-card" href="expert.html">
+    <div class="role-icon">✍</div>
+    <div class="role-info">
+      <div class="role-name">자문위원</div>
+      <div class="role-desc">배정 현황 조회 · Stage 2 의견 작성·제출</div>
+    </div>
+    <div class="role-arrow">›</div>
+  </a>
+
+  <a class="role-card" href="researcher.html">
+    <div class="role-icon">🔬</div>
+    <div class="role-info">
+      <div class="role-name">연구자</div>
+      <div class="role-desc">설계서 등록·작성 · S2 결과 열람 · S3/S4 작성 · PDF 다운로드</div>
+    </div>
+    <div class="role-arrow">›</div>
+  </a>
+
+  <div class="version">v2.0 목업 · 2026.03</div>
+</div>
+</body>
+</html>
