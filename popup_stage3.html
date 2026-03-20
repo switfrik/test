@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>— Stage 3 개발팀 의사결정</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── 팝업 전용 레이아웃 ── */
+body {
+  background: var(--bg);
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 팝업 헤더 */
+.popup-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-2);
+  border-bottom: 2px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+.popup-header-left { display: flex; flex-direction: column; gap: 4px; }
+.popup-header-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.popup-header-meta {
+  font-size: 12px;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.popup-header-right { display: flex; align-items: center; gap: 8px; }
+.popup-close {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-3);
+  transition: all .14s;
+}
+.popup-close:hover { background: var(--red-lt); color: var(--red); border-color: #FECACA; }
+
+/* 본문 */
+.popup-body {
+  flex: 1;
+  padding: 24px;
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* 자문위원 정보 카드 */
+.expert-info-card {
+  background: var(--primary-lt);
+  border: 1.5px solid #BFDBFE;
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px 16px;
+}
+.ei-item { display: flex; flex-direction: column; gap: 3px; }
+.ei-label { font-size: 10px; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.ei-value { font-size: 13px; color: var(--text-1); font-weight: 500; }
+
+/* 섹션 구분선 */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 12px;
+}
+.section-divider-line { flex: 1; height: 1px; background: var(--border); }
+.section-divider-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  white-space: nowrap;
+}
+
+/* 읽기전용 행 */
+.ro-grid {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.ro-label {
+  padding: 9px 14px;
+  background: var(--bg-3);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  display: flex;
+  align-items: flex-start;
+  padding-top: 10px;
+}
+.ro-label:last-of-type { border-bottom: none; }
+.ro-value {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-2);
+  line-height: 1.7;
+}
+.ro-value:last-child { border-bottom: none; }
+
+/* 현행 의료기기 테이블 */
+.device-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 12px; }
+.device-table th { background: var(--bg-3); padding: 8px 10px; border: 1px solid var(--border); text-align: left; font-size: 11px; color: var(--text-3); font-weight: 700; }
+.device-table td { padding: 8px 10px; border: 1px solid var(--border); color: var(--text-2); }
+.device-table tr:nth-child(even) td { background: var(--bg-3); }
+
+/* 임상영향 */
+.impact-radio {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+.impact-radio label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+/* 네비게이션 바 (이전/다음 자문위원) */
+.popup-nav {
+  position: sticky;
+  bottom: 0;
+  background: var(--bg-2);
+  border-top: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -2px 8px rgba(0,0,0,.06);
+}
+.nav-expert-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-expert-btn {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-2);
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all .13s;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 500;
+}
+.nav-expert-btn:hover { border-color: var(--primary); color: var(--primary); }
+.nav-expert-btn.current {
+  border-color: var(--primary);
+  background: var(--primary-lt);
+  color: var(--primary);
+  font-weight: 700;
+}
+</style>
+</head>
+<body>
+
+<!-- 팝업 헤더 -->
+<header class="popup-header">
+  <div class="popup-header-left">
+    <div class="popup-header-title">
+      <span class="stage-badge stage-s2">Stage 3</span>
+      <span id="expertName">개발팀의 의사결정</span>
+    </div>
+    <div class="popup-header-meta">
+      <span class="type-ivd">IVD</span>
+      <span>HPV 소변 검출 시스템 (MassARRAY)</span>
+      <span style="color:var(--border)">|</span>
+      <span id="expertDate">작성일: 2026.09.24 (ver.1.0.0)</span>
+    </div>
+  </div>
+  <div class="popup-header-right">
+    <button class="btn btn-outline btn-sm" onclick="window.print()">🖨 인쇄</button>
+    <button class="popup-close" onclick="window.close()" title="닫기">✕</button>
+  </div>
+</header>
+
+<!-- 본문 -->
+<main class="popup-body" id="popupBody">
+
+
+  <!-- ── 1. 미충족의료수요 확정 ── -->
+  <div class="card mb-12">
+    <div class="form-section-title">1. 자문 후 개발에 반영할 미충족의료수요</div>
+
+    <!-- 1-1. 결정된 미충족의료수요 -->
+    <div class="form-label mb-6">1-1. 개발하는 의료기기에 반영할 미충족의료수요 결정</div>
+    <div style="display:grid;grid-template-columns:140px 1fr;border:1px solid var(--border);border-radius:8px;overflow:hidden;font-size:12.5px;margin-bottom:16px">
+      <div style="padding:10px 12px;background:var(--bg-3);border-right:1px solid var(--border);border-bottom:1px solid var(--border);font-weight:600;color:var(--text-2)">대상자(환자)</div>
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-2);line-height:1.8">
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>기존 검사법인 내진/병변 스왑에 대한 거부감과 검체 채취 시간, 방문에 대한 제약으로 참여율 저하</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>방문·대기 등 기회비용 부담</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>검체량과 검체 품질 이슈로 재채취 및 부정확한 결과 발생</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>제한된 HPV type의 검사로 정확한 감염원 확인의 제약</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>HPV 감염이 의심되거나, 고위험 남성(HIV+, MSM, 면역저하, 반복 사마귀, HPV+ 파트너)에서 선별·추적 도구 부재</span></div>
+        </div>
+      </div>
+      <div style="padding:10px 12px;background:var(--bg-3);border-right:1px solid var(--border);border-bottom:1px solid var(--border);font-weight:600;color:var(--text-2)">사용자(의료인)</div>
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-2);line-height:1.8">
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>남성 표준 검체, 진단법, 결과 해석 프로토콜 부재 (소변·병변 부위 스왑 병행 기준, 컷오프/재검 기준)</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>현행 검사는 여성 대상의 고위험군 기준 검사로 남성 검사 필요성에 대한 의학적 판단 근거 필요</span></div>
+        </div>
+      </div>
+      <div style="padding:10px 12px;background:var(--bg-3);border-right:1px solid var(--border);border-bottom:1px solid var(--border);font-weight:600;color:var(--text-2)">사용처(의료기관)</div>
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-2);line-height:1.8">
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>HPV의 다양한 subtype을 감별할 수 있는 검사법 부재</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>대용량 감별 검사를 운영할 수 있는 자동화/일원화된 시스템 부족</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>자가수집 물류(수거·식별·냉장 2~8℃, 72h 내 분석) 체계 미흡</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>상대적 고비용 검사, 재검/불량률로 인한 비용 손실</span></div>
+        </div>
+      </div>
+      <div style="padding:10px 12px;background:var(--bg-3);border-right:1px solid var(--border);font-weight:600;color:var(--text-2)">시스템 이슈</div>
+      <div style="padding:10px 14px;color:var(--text-2);line-height:1.8">
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>남성 일반 선별검사 비권고 환경에서 급여·정책 근거 부족</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>개인정보/상담 가이드 부재로 결과에 대한 오인과 불안</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);flex-shrink:0">▸</span><span>남성 검사 결과에 대한 임상적 표준화 부재로 결과 해석 및 임상적 행위 결정 근거 부족</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1-2. 해결방안과 적용기술 -->
+    <div class="form-label mb-6">1-2. 미충족의료수요 해결방안과 적용기술</div>
+    <div style="overflow-x:auto;margin-bottom:16px">
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+        <thead>
+          <tr style="background:var(--bg-3)">
+            <th style="padding:8px 10px;border:1px solid var(--border);text-align:center;width:44px">순위</th>
+            <th style="padding:8px 10px;border:1px solid var(--border);text-align:left">미충족의료수요</th>
+            <th style="padding:8px 10px;border:1px solid var(--border);text-align:left">해결방안</th>
+            <th style="padding:8px 10px;border:1px solid var(--border);text-align:left">적용기술</th>
+            <th style="padding:8px 10px;border:1px solid var(--border);text-align:left">기술구현 잠재위험</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:8px 10px;border:1px solid var(--border);text-align:center;font-weight:700;color:var(--primary)" rowspan="2">1</td>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)" rowspan="2">임상적으로 HPV 검사가 필요하다고 판단되는 남성에서 기존 검사의 수용성과 접근성 부족</td>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)" rowspan="2">검사 접근성 및 순응도 개선을 위한 쉬운 검체 채취 도입</td>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)">소변 검체 기반의 검사법 (자가 채취 도입)</td>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-3);font-size:12px" rowspan="2">
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <div>▸ 소변의 특성상 핵산 품질/민감도 저하</div>
+                <div>▸ 부적절 채취 및 운송에 의한 검사 실패 위험 존재</div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)">Recover 시약 기반 소변내 핵산의 추출 효율화 및 품질개선</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 10px;border:1px solid var(--border);text-align:center;font-weight:700;color:var(--primary)" rowspan="3">2</td>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)" rowspan="3">기존 여성 고위험 HPV 중심 진단 프로토콜로 남성 환자에 대한 적용 및 해석 제한적</td>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)" rowspan="3">남녀 모두 적용 가능한 다중 유전자형 검출, 남성 표준 IFU/SOP 적용</td>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)">다중 유전형 동시 표적 증폭 기술</td>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-3);font-size:12px" rowspan="3">
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <div>▸ 결과에 대한 오인</div>
+                <div>▸ 유전형 간 간섭</div>
+                <div>▸ 성능 평가 기준 부재</div>
+              </div>
+            </td>
+          </tr>
+          <tr><td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)">유전형 감별 extension probe 기술</td></tr>
+          <tr><td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)">남성 기준의 성능평가 기준 적용</td></tr>
+          <tr>
+            <td style="padding:8px 10px;border:1px solid var(--border);text-align:center;font-weight:700;color:var(--primary)" rowspan="2">3</td>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)" rowspan="2">남성 HPV 진단검사는 보험 비등재로 비용부담이 크며, 의료현장에서 활용도가 낮음</td>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)" rowspan="2">저비용으로 다양한 HPV 타입을 검사할 수 있으며, 대량 검사가 가능하여 비용효율성 확보 → 보험 등재를 위한 타당성 제시</td>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)">MassARRAY 기반 저비용, 대용량 검사 도입</td>
+            <td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-3);font-size:12px" rowspan="2">
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <div>▸ 검체 및 검사 이슈 발생 시 재검률 증가</div>
+                <div>▸ 데이터 편향에 의한 일반화 한계</div>
+              </div>
+            </td>
+          </tr>
+          <tr><td style="padding:8px 10px;border:1px solid var(--border);color:var(--text-2)">데이터 확보를 통한 임상 적용 타당성 확보</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 1-3. 기대되는 결과 -->
+    <div class="form-label mb-6">1-3. 미충족의료수요 해결에 따라 기대되는 결과</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+      <div style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-3)">
+        <div class="text-xs text-muted mb-4" style="font-weight:600">기기 성능</div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.6">고감도·고특이도의 유전자형별 정밀진단 가능, 30종 이상의 HPV 유전형 동시 검출로 임상 정보 제공 범위 확대</div>
+      </div>
+      <div style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-3)">
+        <div class="text-xs text-muted mb-4" style="font-weight:600">안전성 (환자, 사용자)</div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.6">비침습적 소변 검체 사용으로 감염 및 조직 손상 위험 최소화, 2차 감염 우려 감소</div>
+      </div>
+      <div style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-3)">
+        <div class="text-xs text-muted mb-4" style="font-weight:600">편의성</div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.6">환자의 자가채취 가능, 내원 대기·검체 채취 시간 감소로 간접비 절감, 의료진 시술 부담 감소</div>
+      </div>
+      <div style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-3)">
+        <div class="text-xs text-muted mb-4" style="font-weight:600">비용</div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.6">대량 검사 및 자동화 가능 시스템 도입으로 검사 단가 절감, 기존 NGS·PCR 검사 대비 분석 효율 우수</div>
+      </div>
+      <div style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-3)">
+        <div class="text-xs text-muted mb-4" style="font-weight:600">만족도</div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.6">검체 채취의 간편성으로 통증·수치심 감소, 검사 신뢰도 향상으로 수검자·의료진 모두의 만족도 증가</div>
+      </div>
+      <div style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-3)">
+        <div class="text-xs text-muted mb-4" style="font-weight:600">기타</div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.6">HPV 감염률 및 고위험군 관리지표 축적을 통한 수가 협의 근거 마련, 백신 커버 여부 확인, 정기 검진 프로그램 연계 가능성 확대</div>
+      </div>
+    </div>
+
+    <!-- 1-4. TP/TN/FP/FN -->
+    <div class="cond-section ivd mb-12">
+      <div class="cond-section-label">★ IVD 전용 — 1-4. 체외진단검사 결과에 따라 예상되는 임상영향</div>
+      <table class="result-table">
+        <thead><tr><th style="width:110px">유형</th><th>예상되는 임상영향</th></tr></thead>
+        <tbody>
+          <tr><td class="result-pos">진양성 (TP)</td><td>검체 내 HPV 존재, 위험성에 따라 재검사 혹은 추적검사 등 의료행위 필요</td></tr>
+          <tr><td class="result-pos">진음성 (TN)</td><td>불필요한 치료나 해당 검사에 대한 추가 검사 행위 불필요</td></tr>
+          <tr><td class="result-neg">위양성 (FP)</td><td>불필요 추가 검사 예상, 환자의 불안 및 연관 질환에 대한 과도한 걱정으로 불필요 의료비 지출</td></tr>
+          <tr><td class="result-neg">위음성 (FN)</td><td>감염원에 의한 질환의 진행 및 2차 전파 위험성 증가, 감염자의 상태 추적 및 치료 기회의 소실, 질환 발견의 지연으로 치료 기회를 놓쳐 예후 악화</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 1-5. 임상 결과 영향 -->
+    <div class="form-label mb-6">1-5. 미충족의료수요 해결에 따른 임상 결과 영향</div>
+    <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;font-size:13px">
+      <div style="padding:10px 14px;background:var(--bg-3);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:20px">
+        <span class="form-label">임상 결과 영향</span>
+        <label style="display:flex;align-items:center;gap:5px;cursor:default"><input type="checkbox" checked disabled><strong style="color:var(--green)">영향이 있을 것으로 예상</strong></label>
+        <label style="display:flex;align-items:center;gap:5px;cursor:default;color:var(--text-4)"><input type="checkbox" disabled>영향이 없을 것으로 예상</label>
+      </div>
+      <div style="padding:12px 14px;color:var(--text-2);line-height:1.8;font-size:12.5px">
+        <div style="margin-bottom:10px;color:var(--text-3);font-size:12px">임상 연구를 통해 정량적으로 검증 가능한 결과 지표는 환자군·대조군 설정 및 추적관찰을 통해 수년 이내 검증 가능할 것으로 예상됨</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="padding:10px;background:var(--green-lt);border:1px solid #A7F3D0;border-radius:7px">
+            <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:5px">전암 병변 조기 발견률 증가</div>
+            <div style="font-size:11.5px;color:var(--text-2);line-height:1.6">지표: 전암 병변 조기 진단 비율(%)<br>근거: HPV 조기 진단 및 유전자형 분석 가능 → 전암 병변 단계에서 치료 개입 기회 확대</div>
+          </div>
+          <div style="padding:10px;background:var(--green-lt);border:1px solid #A7F3D0;border-radius:7px">
+            <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:5px">치료 개입 시점 단축</div>
+            <div style="font-size:11.5px;color:var(--text-2);line-height:1.6">지표: 최초 감염 확인부터 병변 치료 개입까지 걸리는 평균 기간(개월)<br>근거: 비침습적 검사 도입 → 무증상 감염도 조기 발견</div>
+          </div>
+          <div style="padding:10px;background:var(--green-lt);border:1px solid #A7F3D0;border-radius:7px">
+            <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:5px">고위험 HPV 감염 지속률 감소</div>
+            <div style="font-size:11.5px;color:var(--text-2);line-height:1.6">지표: 고위험 HPV 감염자의 12·24개월 지속 감염률(%)<br>근거: 조기 진단 후 교육·추적검사·생활습관 관리로 지속 감염율 저하</div>
+          </div>
+          <div style="padding:10px;background:var(--green-lt);border:1px solid #A7F3D0;border-radius:7px">
+            <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:5px">재발·재진단율 감소 및 수검률 향상</div>
+            <div style="font-size:11.5px;color:var(--text-2);line-height:1.6">지표: HPV 관련 병변 1·3년 내 재발률(%), 검사 수검률(%), 추적검사 이행률(%)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 2. 목표하는 의료기기 품목 및 대상군 ── -->
+  <div class="card mb-12">
+    <div class="form-section-title">2. 목표하는 의료기기 품목 및 대상군</div>
+
+    <div class="form-label mb-6">2-1. 목표하는 의료기기 품목, 등급 및 사용목적</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px">
+      <thead>
+        <tr style="background:var(--bg-3)">
+          <th style="padding:9px 12px;border:1px solid var(--border);text-align:left;width:22%">품목</th>
+          <th style="padding:9px 12px;border:1px solid var(--border);text-align:center;width:10%">등급</th>
+          <th style="padding:9px 12px;border:1px solid var(--border);text-align:left">사용목적 정의</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:10px 12px;border:1px solid var(--border);color:var(--text-2)">고위험성감염체<br>유전자검사시약<br><span class="text-mono text-xs text-muted">(N05030.01)</span></td>
+          <td style="padding:10px 12px;border:1px solid var(--border);text-align:center"><span class="badge badge-red">3등급</span></td>
+          <td style="padding:10px 12px;border:1px solid var(--border);color:var(--text-2);line-height:1.7;font-size:12.5px">임상적으로 HPV 검사가 필요하다고 판단되는 대상군의 소변 또는 조직 검체에서 인유두종바이러스(HPV) DNA를 정성적으로 검출하고 유전형을 분류하기 위한 MassARRAY 기반 체외진단용 의료기기</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="form-label mb-6">2-2. 의료기기 목표 사용자와 사용방법</div>
+    <div style="display:grid;grid-template-columns:180px 1fr;border:1px solid var(--border);border-radius:8px;overflow:hidden;font-size:13px;margin-bottom:16px">
+      <div style="padding:10px 14px;background:var(--bg-3);border-right:1px solid var(--border);border-bottom:1px solid var(--border)"><span class="form-label">목표 사용자</span></div>
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px">
+        <label style="display:flex;align-items:center;gap:5px;cursor:default"><input type="checkbox" checked disabled><strong>전문가 (Professional user)</strong></label>
+        <label style="display:flex;align-items:center;gap:5px;cursor:default;color:var(--text-4)"><input type="checkbox" disabled>일반사용자 (Lay user)</label>
+      </div>
+      <div style="padding:10px 14px;background:var(--bg-3);border-right:1px solid var(--border)"><span class="form-label">사용방법</span></div>
+      <div style="padding:10px 14px;color:var(--text-2);line-height:1.8;font-size:12.5px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);font-weight:700;flex-shrink:0">①</span><span>검사실로 이송된 검체는 즉시 원심 분리하여 세포성분 및 불순물을 제거하고 핵산 추출 전용 키트를 사용하여 바이러스 핵산을 정제</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);font-weight:700;flex-shrink:0">②</span><span>추출된 핵산을 정량하여 5ng 이상의 핵산을 키트에 포함된 One-step PCR Master mix로 제공된 설명서에 따라 표적 부위를 증폭</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);font-weight:700;flex-shrink:0">③</span><span>이후 5㎕를 키트에 포함된 extension probe mix와 반응시킨 뒤, MassARRAY 장비로 정성 분석 및 유전형 서열 확인을 수행</span></div>
+          <div style="display:flex;gap:6px"><span style="color:var(--primary);font-weight:700;flex-shrink:0">④</span><span>결과 해석은 내부 대조군 및 양성/음성 대조 결과를 포함한 QC 기준에 따라 판정</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2-3. IVD 전용 - 적용 대상군 구체화 -->
+    <div class="cond-section ivd">
+      <div class="cond-section-label">★ IVD 전용 — 2-3. 적용 대상군의 구체화</div>
+      <div style="display:grid;grid-template-columns:180px 1fr;border:1px solid rgba(124,58,237,.2);border-radius:8px;overflow:hidden;font-size:12.5px">
+        <div style="padding:8px 12px;background:rgba(124,58,237,.05);border-right:1px solid rgba(124,58,237,.2);border-bottom:1px solid rgba(124,58,237,.2);font-weight:600;color:var(--text-3)">검사의 역할</div>
+        <div style="padding:8px 14px;border-bottom:1px solid rgba(124,58,237,.2)"><span class="badge badge-teal">대체 (Replacement)</span></div>
+        <div style="padding:8px 12px;background:rgba(124,58,237,.05);border-right:1px solid rgba(124,58,237,.2);border-bottom:1px solid rgba(124,58,237,.2);font-weight:600;color:var(--text-3)">질환군</div>
+        <div style="padding:8px 14px;border-bottom:1px solid rgba(124,58,237,.2);color:var(--text-2);line-height:1.7">반복적 생식기 사마귀, HIV 양성, 항문암 고위험군(MSM, 면역저하자) 및 의료진의 판단에 검사가 필요한 사람</div>
+        <div style="padding:8px 12px;background:rgba(124,58,237,.05);border-right:1px solid rgba(124,58,237,.2);border-bottom:1px solid rgba(124,58,237,.2);font-weight:600;color:var(--text-3)">사전 검사 소견</div>
+        <div style="padding:8px 14px;border-bottom:1px solid rgba(124,58,237,.2);color:var(--text-2)">반복적 또는 광범위한 생식기 사마귀, 항문암 위험군(HIV+, MSM), HPV 관련 질환 과거력, 다른 성매개 감염 진단 이력</div>
+        <div style="padding:8px 12px;background:rgba(124,58,237,.05);border-right:1px solid rgba(124,58,237,.2);border-bottom:1px solid rgba(124,58,237,.2);font-weight:600;color:var(--text-3)">검체</div>
+        <div style="padding:8px 14px;border-bottom:1px solid rgba(124,58,237,.2);color:var(--text-2)">소변, 조직</div>
+        <div style="padding:8px 12px;background:rgba(124,58,237,.05);border-right:1px solid rgba(124,58,237,.2);border-bottom:1px solid rgba(124,58,237,.2);font-weight:600;color:var(--text-3)">검체 관리 조건</div>
+        <div style="padding:8px 14px;border-bottom:1px solid rgba(124,58,237,.2);color:var(--text-2)">검체 채취 후 냉장 보관 (2~8℃, 최대 72시간 이내 분석 권장)</div>
+        <div style="padding:8px 12px;background:rgba(124,58,237,.05);border-right:1px solid rgba(124,58,237,.2);font-weight:600;color:var(--text-3)">기타</div>
+        <div style="padding:8px 14px;color:var(--text-2);line-height:1.7;font-size:12px">
+          무증상 일반 남성의 HPV 선별검사(screening)는 권고되지 않으나, 임상적 개입 필요성이 높은 특정 군 중심 적용 가능함.<br>
+          <strong style="color:var(--text-2)">향후 보험 적용 적응증:</strong> ① HIV 감염 남성 &nbsp; ② MSM &nbsp; ③ HPV 관련 질환 파트너 &nbsp; ④ HPV 관련 병변 과거력 있는 남성 &nbsp; ⑤ 장기이식 환자
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3. 결정된 참고 표준 (IVD 전용) ── -->
+  <div class="card mb-12">
+    <div class="form-section-title">★ IVD 전용 — 3. 결정된 참고 표준</div>
+    <div style="display:grid;grid-template-columns:200px 1fr;border:1px solid rgba(124,58,237,.2);border-radius:8px;overflow:hidden;font-size:12.5px;margin-bottom:12px">
+      <div style="padding:8px 12px;background:rgba(124,58,237,.05);border-right:1px solid rgba(124,58,237,.2);border-bottom:1px solid rgba(124,58,237,.2);font-weight:600;color:var(--text-3)">검사항목명</div>
+      <div style="padding:8px 14px;border-bottom:1px solid rgba(124,58,237,.2);color:var(--text-2)">HPV DNA</div>
+      <div style="padding:8px 12px;background:rgba(124,58,237,.05);border-right:1px solid rgba(124,58,237,.2);border-bottom:1px solid rgba(124,58,237,.2);font-weight:600;color:var(--text-3)">참고 표준 기기</div>
+      <div style="padding:8px 14px;border-bottom:1px solid rgba(124,58,237,.2);color:var(--text-2)">Anyplex™ II HPV28 Detection &nbsp;·&nbsp; <strong>(주)씨젠</strong></div>
+      <div style="padding:8px 12px;background:rgba(124,58,237,.05);border-right:1px solid rgba(124,58,237,.2);font-weight:600;color:var(--text-3)">부재 시 서술</div>
+      <div style="padding:8px 14px;color:var(--text-2);line-height:1.8;font-size:12px">
+        <div style="display:flex;gap:6px;margin-bottom:3px"><span style="color:var(--purple);flex-shrink:0">▸</span><span>여성 HPV 진단은 이미 자궁경부 세포검체를 이용한 FDA/CE-IVD 승인된 상용화 제품이 존재함</span></div>
+        <div style="display:flex;gap:6px"><span style="color:var(--purple);flex-shrink:0">▸</span><span>남성 HPV 진단은 여성용 HPV PCR 검사 키트(예: cobas, Allplex)를 그대로 적용하여 검체를 남성 항문, 음경 표면 스왑, 구강 스왑 등에서 채취하거나, 항문도말검사를 통해 HIV 감염 고위험군 남성(MSM 등)에서 anal Pap smear + HPV PCR 검사를 병행하여 항문암 전암병변을 선별함</span></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- 하단 네비게이션 (Stage 이동 -->
+<footer class="popup-nav">
+  <button class="btn btn-outline btn-sm" id="btnPrev" onclick="location.href='popup_stage2.html'">‹ Stage2</button>
+  <div class="nav-expert-list" id="navExpertList"></div>
+  <button class="btn btn-outline btn-sm"  onclick="location.href='popup_stage4.html'">Stage4 ›</button>
+</footer>
+
+<script>
+/* ── URL 파라미터로 자문위원 인덱스 수신 ── */
+const params = new URLSearchParams(window.location.search);
+let currentIdx = parseInt(params.get('idx') || '0', 10);
+
+
+/* ── 헤더 정보 업데이트 ── */
+function updateHeader(idx) {
+  const e = EXPERTS[idx];
+  document.getElementById('expertName').textContent  = e.name;
+  document.getElementById('expertAffil').textContent = e.affil;
+  document.getElementById('expertDate').textContent  = '자문일: ' + e.date;
+  document.title = `Stage 3 개발팀 의사결정 — ${e.name}`;
+
+  document.getElementById('ei-name').textContent    = e.name;
+  document.getElementById('ei-affil').textContent   = e.affil.split('·')[1]?.trim() || e.affil;
+  document.getElementById('ei-dept').textContent    = e.dept;
+  document.getElementById('ei-special').textContent = e.special;
+  document.getElementById('ei-title').textContent   = e.title;
+  document.getElementById('ei-date').textContent    = e.date;
+
+  /* 네비 버튼 */
+  document.getElementById('btnPrev').disabled = idx <= 0;
+  document.getElementById('btnNext').disabled = idx >= EXPERTS.length - 1;
+
+  /* 네비 점 목록 */
+  document.getElementById('navExpertList').innerHTML = EXPERTS.map((ex, i) =>
+    `<button class="nav-expert-btn ${i === idx ? 'current' : ''}"
+             onclick="navigate(${i - currentIdx})">${ex.name}</button>`
+  ).join('');
+}
+
+/* ── 페이지 이동 ── */
+function navigate(delta) {
+  const next = currentIdx + delta;
+  if (next < 0 || next >= EXPERTS.length) return;
+  /* 같은 팝업 창에서 idx만 교체 */
+  const url = new URL(window.location.href);
+  url.searchParams.set('idx', next);
+  window.location.href = url.toString();
+}
+
+/* ── 초기화 ── */
+updateHeader(currentIdx);
+</script>
+</body>
+</html>

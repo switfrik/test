@@ -577,3 +577,80 @@ button { cursor: pointer; font-family: inherit; }
   background: rgba(255,255,255,.08);
   margin: 4px 2px;
 }
+
+/* ── Dev Tooltips (개발용 · 배포 전 삭제) ── */
+.dev-tip {
+  position: fixed;
+  z-index: 9999;
+  max-width: 360px;
+  background: #FEE6EF;
+  color: #e2e8f0;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 10px 13px;
+  border-radius: 10px;
+  border: 1px solid rgba(99,179,237,.35);
+  box-shadow: 0 4px 20px rgba(0,0,0,.45);
+  pointer-events: none;
+}
+/* 꼬리 방향 4종 */
+.dev-tip::after {
+  content: '';
+  position: absolute;
+  border: 7px solid transparent;
+}
+.dev-tip.tip-right::after   { left: -14px; top: 14px; border-right-color: rgba(99,179,237,.35); }
+.dev-tip.tip-left::after    { right: -14px; top: 14px; border-left-color: rgba(99,179,237,.35); }
+.dev-tip.tip-bottom::after  { top: -14px; left: 16px; border-bottom-color: rgba(99,179,237,.35); }
+.dev-tip.tip-top::after     { bottom: -14px; left: 16px; border-top-color: rgba(99,179,237,.35); }
+/* 내부 요소 */
+.dev-tip-tag  { font-size: 9px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+                color: #63b3ed; margin-bottom: 4px; font-family: 'IBM Plex Mono', monospace; }
+.dev-tip-body { color: #000; }
+.dev-tip-sub  { color: #94a3b8; font-size: 11px; margin-top: 3px; }
+/* 개발 배지 */
+.dev-badge {
+  position: fixed;
+  z-index: 9999;
+  bottom: 14px;
+  right: 14px;
+  background: #1a1a2e;
+  border: 1px solid rgba(99,179,237,.35);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  color: #63b3ed;
+  font-family: 'IBM Plex Mono', monospace;
+  pointer-events: none;
+  box-shadow: 0 2px 10px rgba(0,0,0,.3);
+}
+
+/* ── Upload Box ── */
+.upload-box {
+  border: 2px dashed var(--border-2);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  background: var(--bg-3);
+}
+.upload-box:hover,
+.upload-box.drag-over {
+  border-color: var(--primary);
+  background: var(--primary-lt);
+}
+.upload-icon { font-size: 32px; margin-bottom: 8px; }
+.upload-text { font-size: 13px; font-weight: 600; color: var(--text-2); }
+.upload-sub  { font-size: 11px; color: var(--text-4); margin-top: 4px; }
+.upload-file-info {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  padding: 7px 10px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  gap: 6px;
+}

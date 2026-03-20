@@ -3,81 +3,494 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>의료제품 설계서 운영관리 시스템</title>
+<title>의료제품 설계서 운영관리 시스템 — 리뷰</title>
 <link rel="stylesheet" href="style.css">
 <style>
-body { background: #0F1C2E; display:flex; align-items:center; justify-content:center; min-height:100vh; }
-.login-wrap { width: 100%; max-width: 480px; padding: 24px; }
-.login-logo { text-align:center; margin-bottom:32px; }
-.login-logo .mark { width:52px;height:52px;background:var(--primary);border-radius:12px;
-  display:inline-flex;align-items:center;justify-content:center;font-size:26px;
-  box-shadow:0 4px 20px rgba(26,86,168,.5);margin-bottom:12px; }
-.login-logo h1 { font-size:18px;font-weight:700;color:#E5E7EB;line-height:1.4; }
-.login-logo p  { font-size:12px;color:#6B7280;margin-top:4px;font-family:'IBM Plex Mono',monospace; }
-.role-card {
-  background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
-  border-radius:12px;padding:16px 20px;margin-bottom:10px;
-  display:flex;align-items:center;gap:14px;cursor:pointer;
-  text-decoration:none;transition:all .15s;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0F1C2E; min-height: 100vh; display: flex; flex-direction: column; font-family: 'Noto Sans KR', sans-serif; }
+
+/* 상단 바 */
+.top-bar { height:52px; background:rgba(255,255,255,.04); border-bottom:1px solid rgba(255,255,255,.08); display:flex; align-items:center; justify-content:space-between; padding:0 24px; flex-shrink:0; }
+.top-bar-left { display:flex; align-items:center; gap:12px; }
+.top-bar-logo { width:30px; height:30px; background:#1A56A8; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+.top-bar-title { font-size:13px; font-weight:600; color:#E5E7EB; }
+.top-bar-sub { font-size:11px; color:#6B7280; font-family:'IBM Plex Mono',monospace; padding:2px 8px; background:rgba(255,255,255,.06); border-radius:4px; border:1px solid rgba(255,255,255,.08); }
+.top-bar-right { display:flex; align-items:center; gap:8px; }
+.tb-btn { padding:5px 12px; border-radius:6px; font-size:12px; font-family:'Noto Sans KR',sans-serif; cursor:pointer; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#D1D5DB; transition:all .14s; }
+.tb-btn:hover { background:rgba(255,255,255,.1); color:#fff; }
+.tb-btn.primary { background:#1A56A8; border-color:#1A56A8; color:#fff; }
+.tb-btn.primary:hover { background:#143F84; }
+
+/* 본문 분할 */
+.split-layout { flex:1; display:flex; overflow:hidden; height:calc(100vh - 52px); }
+
+/* 왼쪽 70% */
+.pane-left { width:70%; display:flex; flex-direction:column; border-right:1px solid rgba(255,255,255,.08); }
+.pane-left-header { height:42px; background:rgba(255,255,255,.03); border-bottom:1px solid rgba(255,255,255,.07); display:flex; align-items:center; padding:0 16px; gap:10px; flex-shrink:0; }
+.pane-label { font-size:10px; font-weight:700; color:#6B7280; text-transform:uppercase; letter-spacing:.08em; }
+.page-tabs { display:flex; gap:2px; margin-left:4px; }
+.page-tab { padding:3px 10px; font-size:11px; border-radius:4px; cursor:pointer; color:#9CA3AF; border:1px solid transparent; transition:all .13s; font-family:'Noto Sans KR',sans-serif; background:transparent; }
+.page-tab:hover { color:#E5E7EB; background:rgba(255,255,255,.06); }
+.page-tab.active { color:#93BBFF; background:rgba(26,86,168,.2); border-color:rgba(26,86,168,.35); }
+.iframe-wrap { flex:1; position:relative; overflow:hidden; }
+.iframe-wrap iframe { width:100%; height:100%; border:none; background:#F8F9FC; }
+.iframe-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:#0F1C2E; flex-direction:column; gap:12px; transition:opacity .3s; }
+.iframe-overlay.hidden { opacity:0; pointer-events:none; }
+.overlay-icon { font-size:36px; opacity:.4; }
+.overlay-text { font-size:13px; color:#6B7280; }
+
+/* 오른쪽 30% */
+.pane-right { width:30%; display:flex; flex-direction:column; background:#111827; }
+.pane-right-header { height:42px; background:rgba(255,255,255,.03); border-bottom:1px solid rgba(255,255,255,.07); display:flex; align-items:center; justify-content:space-between; padding:0 16px; flex-shrink:0; }
+.feedback-tabs { display:flex; gap:1px; background:rgba(255,255,255,.05); border-radius:6px; padding:3px; }
+.feedback-tab { padding:4px 12px; font-size:11px; border-radius:4px; cursor:pointer; color:#9CA3AF; border:none; background:transparent; transition:all .13s; font-family:'Noto Sans KR',sans-serif; }
+.feedback-tab.active { background:#1A56A8; color:#fff; }
+
+/* Tally 래퍼 */
+.tally-wrap { flex:1; overflow:hidden; display:flex; flex-direction:column; }
+.tally-wrap iframe { flex:1; border:none; width:100%; height:100%; background:transparent; }
+
+/* 설정 패널 */
+.setup-panel { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 18px; text-align:center; gap:12px; overflow-y:auto; }
+.setup-icon { font-size:36px; opacity:.5; }
+.setup-title { font-size:14px; font-weight:600; color:#E5E7EB; }
+.setup-desc { font-size:12px; color:#6B7280; line-height:1.7; }
+.setup-steps { width:100%; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:14px 16px; text-align:left; display:flex; flex-direction:column; gap:10px; }
+.setup-step { display:flex; gap:10px; align-items:flex-start; font-size:12px; color:#9CA3AF; }
+.step-num { width:20px; height:20px; background:#1A56A8; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; flex-shrink:0; margin-top:1px; }
+.setup-input-row { display:flex; gap:6px; width:100%; }
+.setup-input { flex:1; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:6px; padding:7px 10px; color:#E5E7EB; font-size:12px; font-family:'IBM Plex Mono',monospace; }
+.setup-input:focus { outline:none; border-color:#1A56A8; }
+.setup-input::placeholder { color:#4B5563; }
+.field-box { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); border-radius:6px; padding:10px 12px; font-size:11px; color:#9CA3AF; line-height:1.9; }
+
+/* 컨텍스트 바 */
+.context-bar { padding:7px 14px; background:rgba(26,86,168,.12); border-bottom:1px solid rgba(26,86,168,.2); font-size:11px; color:#93BBFF; display:flex; align-items:center; gap:6px; flex-shrink:0; }
+.context-dot { width:6px; height:6px; background:#63B3ED; border-radius:50%; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ── 과업리스트 패널 ── */
+.task-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 }
-.role-card:hover { background:rgba(26,86,168,.2);border-color:var(--primary); }
-.role-icon  { font-size:24px;width:42px;height:42px;background:rgba(255,255,255,.08);
-  border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
-.role-info  { flex:1; }
-.role-name  { font-size:15px;font-weight:600;color:#E5E7EB; }
-.role-desc  { font-size:12px;color:#9CA3AF;margin-top:2px; }
-.role-arrow { color:#6B7280;font-size:16px; }
-.divider-text { text-align:center;font-size:11px;color:#4B5563;margin:16px 0;letter-spacing:.05em; }
-.version { text-align:center;font-size:11px;color:#4B5563;margin-top:20px;font-family:'IBM Plex Mono',monospace; }
+.task-toolbar {
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,.02);
+}
+.task-filter-btn {
+  padding: 3px 10px;
+  font-size: 11px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,.1);
+  background: transparent;
+  color: #9CA3AF;
+  font-family: 'Noto Sans KR', sans-serif;
+  transition: all .13s;
+}
+.task-filter-btn:hover { color: #E5E7EB; }
+.task-filter-btn.active {
+  border-color: #1A56A8;
+  background: rgba(26,86,168,.2);
+  color: #93BBFF;
+}
+.task-summary {
+  display: flex;
+  gap: 8px;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  flex-shrink: 0;
+}
+.summary-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.summary-bar {
+  flex: 1;
+  height: 5px;
+  background: rgba(255,255,255,.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.summary-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: #22C55E;
+  transition: width .4s ease;
+}
+.task-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+.task-list::-webkit-scrollbar { width: 3px; }
+.task-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius:2px; }
+
+/* 역할 섹션 */
+.role-section { margin-bottom: 4px; }
+.role-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 14px 5px;
+  cursor: pointer;
+  user-select: none;
+}
+.role-header-left { display: flex; align-items: center; gap: 7px; }
+.role-icon-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.role-name-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.role-counts {
+  display: flex; gap: 5px;
+}
+.role-o { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #22C55E; }
+.role-x { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #6B7280; }
+.role-arrow { font-size: 10px; color: #6B7280; transition: transform .2s; }
+.role-arrow.open { transform: rotate(90deg); }
+.role-body { display: none; }
+.role-body.open { display: block; }
+
+/* 그룹 라벨 */
+.group-label {
+  padding: 5px 14px 3px 24px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #4B5563;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+/* 과업 행 */
+.task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 5px 14px 5px 24px;
+  transition: background .12s;
+}
+.task-row:hover { background: rgba(255,255,255,.03); }
+.task-num {
+  font-size: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  color: #4B5563;
+  min-width: 20px;
+  padding-top: 1px;
+  flex-shrink: 0;
+}
+.task-text {
+  flex: 1;
+  font-size: 11.5px;
+  color: #D1D5DB;
+  line-height: 1.5;
+}
+.task-text.dimmed { color: #4B5563; }
+.impl-badge {
+  font-size: 10px;
+  font-weight: 700;
+  font-family: 'IBM Plex Mono', monospace;
+  padding: 1px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.impl-o { background: rgba(22,101,52,.25); color: #86EFAC; border: 1px solid rgba(22,101,52,.4); }
+.impl-x { background: rgba(75,85,99,.15); color: #6B7280; border: 1px solid rgba(75,85,99,.25); }
+
+/* 토스트 */
+.submit-toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px); background:#166534; color:#DCFCE7; padding:10px 20px; border-radius:8px; font-size:13px; font-family:'Noto Sans KR',sans-serif; box-shadow:0 4px 20px rgba(0,0,0,.4); transition:transform .3s ease; z-index:9999; white-space:nowrap; }
+.submit-toast.show { transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
-<div class="login-wrap">
-  <div class="login-logo">
-    <div class="mark">⚕</div>
-    <h1>미충족의료수요 기반<br>의료제품 설계서 운영관리 시스템</h1>
-    <p>2026 범부처 사업 · 접속 역할 선택</p>
+
+<header class="top-bar">
+  <div class="top-bar-left">
+    <div class="top-bar-logo">⚕</div>
+    <div class="top-bar-title">의료제품 설계서 운영관리 시스템</div>
+    <span class="top-bar-sub" style="color:#FCD34D;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">🔧 UI 리뷰 모드</span>
+    <span class="top-bar-sub">v2.0 목업 · 2026.03</span>
+  </div>
+  <div class="top-bar-right">
+    <button class="tb-btn" onclick="copyLink()">🔗 링크 복사</button>
+    <button class="tb-btn primary" onclick="focusTally()">+ 피드백 남기기</button>
+  </div>
+</header>
+
+<div class="split-layout">
+
+  <!-- ── 왼쪽 70% ── -->
+  <div class="pane-left">
+    <div class="pane-left-header">
+      <span class="pane-label">미리보기</span>
+      <div class="page-tabs">
+        <button class="page-tab active" data-src="admin.html" data-label="범부처 관리자" onclick="switchPage(this)">범부처</button>
+        <button class="page-tab" data-src="kams.html" data-label="대한의학회" onclick="switchPage(this)">대한의학회</button>
+        <button class="page-tab" data-src="expert.html" data-label="자문위원" onclick="switchPage(this)">자문위원</button>
+        <button class="page-tab" data-src="researcher.html" data-label="연구자" onclick="switchPage(this)">연구자</button>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <span id="currentPageLabel" style="font-size:11px;color:#6B7280">범부처 관리자</span>
+        <button class="tb-btn" style="font-size:11px;padding:3px 8px" onclick="openInNew()">↗ 새 탭</button>
+      </div>
+    </div>
+    <div class="iframe-wrap">
+      <iframe id="previewFrame" src="admin.html" title="시스템 미리보기" onload="frameLoaded()"></iframe>
+      <div class="iframe-overlay" id="iframeOverlay">
+        <div class="overlay-icon">⚡</div>
+        <div class="overlay-text" id="overlayText">페이지 로딩중...</div>
+      </div>
+    </div>
   </div>
 
-  <div class="divider-text">역할별 포털 접속</div>
-
-  <a class="role-card" href="admin.html">
-    <div class="role-icon">🏛</div>
-    <div class="role-info">
-      <div class="role-name">범부처 관리자</div>
-      <div class="role-desc">전체 설계서 조회 · Stage 전환 승인 · 사용자 관리</div>
+  <!-- ── 오른쪽 30% ── -->
+  <div class="pane-right">
+    <div class="pane-right-header">
+      <span class="pane-label">📋 리뷰</span>
+      <div class="feedback-tabs">
+        <button class="feedback-tab active" onclick="switchRightTab(this,'tasks')">과업리스트</button>
+        <button class="feedback-tab" onclick="switchRightTab(this,'tally')">피드백 폼</button>
+      </div>
     </div>
-    <div class="role-arrow">›</div>
-  </a>
 
-  <a class="role-card" href="kams.html">
-    <div class="role-icon">⚕</div>
-    <div class="role-info">
-      <div class="role-name">대한의학회</div>
-      <div class="role-desc">자문위원 관리 · S2 의견 조회 · 통합확정 · 재요청 발행</div>
+    <!-- 컨텍스트 바 -->
+    <div class="context-bar">
+      <div class="context-dot"></div>
+      <span>현재 페이지: <strong id="contextPage">범부처 관리자</strong></span>
     </div>
-    <div class="role-arrow">›</div>
-  </a>
 
-  <a class="role-card" href="expert.html">
-    <div class="role-icon">✍</div>
-    <div class="role-info">
-      <div class="role-name">자문위원</div>
-      <div class="role-desc">배정 현황 조회 · Stage 2 의견 작성·제출</div>
+    <!-- ── 과업리스트 탭 ── -->
+    <div class="task-panel" id="tab-tasks">
+
+      <!-- 필터 툴바 -->
+      <div class="task-toolbar">
+        <button class="task-filter-btn active" data-role="전체" onclick="filterTasks(this)">전체</button>
+        <button class="task-filter-btn" data-role="범부처" onclick="filterTasks(this)">범부처</button>
+        <button class="task-filter-btn" data-role="대한의학회" onclick="filterTasks(this)">의학회</button>
+        <button class="task-filter-btn" data-role="자문위원" onclick="filterTasks(this)">자문위원</button>
+        <button class="task-filter-btn" data-role="연구자" onclick="filterTasks(this)">연구자</button>
+      </div>
+
+      <!-- O/X 진행바 요약 -->
+      <div class="task-summary">
+        <div class="summary-chip">
+          <span style="color:#86EFAC">O</span>
+          <span id="sumO" style="color:#86EFAC;font-weight:700">33</span>
+        </div>
+        <div class="summary-bar">
+          <div class="summary-bar-fill" id="sumBar" style="width:59%"></div>
+        </div>
+        <div class="summary-chip">
+          <span style="color:#6B7280">X</span>
+          <span id="sumX" style="color:#6B7280;font-weight:700">23</span>
+        </div>
+        <div class="summary-chip" style="margin-left:auto;font-size:10px;color:#4B5563">
+          <span id="sumTotal">56</span>개
+        </div>
+      </div>
+
+      <!-- 과업 목록 -->
+      <div class="task-list" id="taskList"></div>
     </div>
-    <div class="role-arrow">›</div>
-  </a>
 
-  <a class="role-card" href="researcher.html">
-    <div class="role-icon">🔬</div>
-    <div class="role-info">
-      <div class="role-name">연구자</div>
-      <div class="role-desc">설계서 등록·작성 · S2 결과 열람 · S3/S4 작성 · PDF 다운로드</div>
+    <!-- ── Tally 피드백 탭 ── -->
+    <div style="display:none;flex:1;flex-direction:column" id="tab-tally">
+      <div class="tally-wrap">
+        <div class="setup-panel" id="setupPanel">
+          <div class="setup-icon">📋</div>
+          <div class="setup-title">Tally 피드백 폼 연결</div>
+          <div class="setup-desc">tally.so에서 폼을 만든 후<br>임베드 URL을 아래에 붙여넣으세요</div>
+          <div class="setup-steps">
+            <div class="setup-step"><div class="step-num">1</div><div><a href="https://tally.so" target="_blank" style="color:#93BBFF">tally.so</a> 접속 → 새 폼 만들기</div></div>
+            <div class="setup-step"><div class="step-num">2</div><div>권장 항목: 페이지/섹션 선택 (Dropdown) · 코멘트 (Long text) · 우선순위 (Multiple choice)</div></div>
+            <div class="setup-step"><div class="step-num">3</div><div>Share → Embed → iFrame URL 복사</div></div>
+            <div class="setup-input-row">
+              <input class="setup-input" id="tallyUrl" type="text" placeholder="https://tally.so/embed/xxxxx">
+              <button class="tb-btn primary" onclick="applyTally()">적용</button>
+            </div>
+            <div class="setup-step"><div class="step-num">4</div><div>응답 확인: tally.so → Submissions → CSV 내보내기</div></div>
+          </div>
+        </div>
+        <iframe id="tallyFrame" src="" style="display:none;flex:1;width:100%;border:none" title="피드백 폼"></iframe>
+      </div>
     </div>
-    <div class="role-arrow">›</div>
-  </a>
 
-  <div class="version">v2.0 목업 · 2026.03</div>
+  </div>
 </div>
+
+<div class="submit-toast" id="submitToast">✅ 피드백이 제출되었습니다. 감사합니다!</div>
+
+<script>
+/* ── 과업 데이터 ── */
+const TASK_DATA = [{"role": "범부처", "group": "", "num": "1", "task": "사업총괄 대시보드 구현", "impl": "X"}, {"role": "범부처", "group": "", "num": "2", "task": "통계현황 : 기간/품목/등급별 통계 및 엑셀추출", "impl": "X"}, {"role": "범부처", "group": "[설계서 관리]", "num": "3", "task": "Stage1. 정보를 등록할 입력 폼 구현", "impl": "X"}, {"role": "범부처", "group": "[설계서 관리]", "num": "4", "task": "Stage1. PDF파일을 업로드하여 입력 폼에 자동 반영되도록 구현", "impl": "X"}, {"role": "범부처", "group": "[설계서 관리]", "num": "5", "task": "설계서 조회 및 버전별 조회", "impl": "O"}, {"role": "범부처", "group": "[설계서 관리]", "num": "6", "task": "설계서 저장 및 관리 기능", "impl": "X"}, {"role": "범부처", "group": "[설계서 관리]", "num": "7", "task": "설계서 정보 삭제 기능", "impl": "X"}, {"role": "범부처", "group": "[설계서 관리]", "num": "8", "task": "단계별 승인 기능", "impl": "O"}, {"role": "범부처", "group": "[설계서 관리]", "num": "9", "task": "설계서 단계별 보완요청 기능(섹션별 검토의견) - Stage3,4", "impl": "O"}, {"role": "범부처", "group": "[설계서 관리]", "num": "10", "task": "설계서 단계별 보완요청(검토의견 통합 확정 기능) - Stage3,4", "impl": "O"}, {"role": "범부처", "group": "[설계서 관리]", "num": "11", "task": "설계서 단계별 보완제출 자료검토 기능", "impl": "X"}, {"role": "범부처", "group": "[설계서 관리]", "num": "12", "task": "설계서 단계별 반려 기능", "impl": "X"}, {"role": "범부처", "group": "[설계서 관리]", "num": "13", "task": "설계서 진행 프로그레스바 시각화 및 트래킹", "impl": "X"}, {"role": "범부처", "group": "[설계서 관리]", "num": "14", "task": "설계서 버전 이력화 및 조회 기능", "impl": "O"}, {"role": "범부처", "group": "[설계서 관리]", "num": "15", "task": "설계서 버전 대조 기능(Stage1 → Stage3)", "impl": "X"}, {"role": "범부처", "group": "[설계서 관리]", "num": "16", "task": "설계서 변경 및 보완이력 관리 기능", "impl": "O"}, {"role": "범부처", "group": "[설계서 관리]", "num": "18", "task": "산출물 pdf 구현 : 단계별 설계서, Stage2 설계서 보완요청서, Stage2 인증본", "impl": "O"}, {"role": "범부처", "group": "[설계서 관리]", "num": "19", "task": "산출물 pdf 구현 : Stage 통합 리포팅", "impl": "O"}, {"role": "범부처", "group": "[자문위원 관리]", "num": "24", "task": "전문가 정보 등록 및 수정 기능", "impl": "O"}, {"role": "범부처", "group": "[자문위원 관리]", "num": "25", "task": "전문가 회원계정 발급 및 연계", "impl": "O"}, {"role": "범부처", "group": "[자문위원 관리]", "num": "26", "task": "전문가 정보 공개범위 설정", "impl": "O"}, {"role": "범부처", "group": "[자문위원 관리]", "num": "27", "task": "분야별 전문가 검색을 위한 전문분야 카테고리 관리", "impl": "O"}, {"role": "범부처", "group": "[자문위원 관리]", "num": "28", "task": "전문가 목록 조회 및 검색 기능", "impl": "O"}, {"role": "범부처", "group": "[이해상충관리]", "num": "29", "task": "COI 정보 등록 및 수정 기능", "impl": "O"}, {"role": "범부처", "group": "[이해상충관리]", "num": "30", "task": "COI 정보 조회 기능", "impl": "O"}, {"role": "대한의학회", "group": "", "num": "20", "task": "대시보드 : 자문 진행현황 모니터링", "impl": "X"}, {"role": "대한의학회", "group": "", "num": "21", "task": "통계현황 : 기간/품목/등급별 통계 및 엑셀추출", "impl": "X"}, {"role": "대한의학회", "group": "", "num": "22", "task": "자문위원 배정 : 위임된 권한에 따름", "impl": "O"}, {"role": "대한의학회", "group": "", "num": "23", "task": "설계서 관리 : 위임된 권한에 따름", "impl": "O"}, {"role": "대한의학회", "group": "", "num": "17", "task": "Stage2에 대한 해설 요약 기능", "impl": "O"}, {"role": "대한의학회", "group": "[자문위원 배정 기능]", "num": "", "task": "과제 정보 기반 전문가 검색 기능", "impl": "O"}, {"role": "대한의학회", "group": "[자문위원 배정 기능]", "num": "31", "task": "전문가 목록 조회", "impl": "O"}, {"role": "대한의학회", "group": "[자문위원 배정 기능]", "num": "32", "task": "자문위원 배정 기능", "impl": "O"}, {"role": "대한의학회", "group": "[자문위원 배정 기능]", "num": "33", "task": "COI 년차별 변경 이력 조회", "impl": "X"}, {"role": "대한의학회", "group": "[자문위원 배정 기능]", "num": "34", "task": "Stage2 보완의견 작성 및 재확정 기능", "impl": "O"}, {"role": "자문위원", "group": "", "num": "35", "task": "대시보드 : 배정자문 진행현황 모니터링 및 나의 할일 조회", "impl": "X"}, {"role": "자문위원", "group": "", "num": "36", "task": "설계서 조회 : 배정된 과제에 한하여 Stage1 조회 가능", "impl": "O"}, {"role": "자문위원", "group": "", "num": "38", "task": "Stage2 정보 등록 수정 기능 - 버전별 신규작성 가능하도록", "impl": "O"}, {"role": "자문위원", "group": "", "num": "39", "task": "Stage2 확정 제출 기능", "impl": "O"}, {"role": "자문위원", "group": "", "num": "41", "task": "Stage2 조회 설정에 따라 다른 전문가 의견을 조회 할 수 있도록 구현", "impl": "X"}, {"role": "자문위원", "group": "", "num": "42", "task": "Stage3/4 조회 설정에 따라 전문가가 Stage3/4 설계 내용을 조회할 수 있도록 구현", "impl": "X"}, {"role": "연구자", "group": "", "num": "43", "task": "대시보드 : 임상자문 현황 및 진행상황", "impl": "X"}, {"role": "연구자", "group": "", "num": "44", "task": "설계서 조회 및 신청단계 조회", "impl": "O"}, {"role": "연구자", "group": "", "num": "45", "task": "Stage1 등록(수동) : 스테이지 정보 등록/수정", "impl": "O"}, {"role": "연구자", "group": "", "num": "46", "task": "Stage1 등록(자동화1) : 문서파일 정제 및 텍스트 추출 (PDF)", "impl": "X"}, {"role": "연구자", "group": "", "num": "47", "task": "Stage1 등록(자동화2) : 문서파일 정제 및 이미지 추출 (PDF)", "impl": "X"}, {"role": "연구자", "group": "", "num": "48", "task": "Stage1 등록(자동화3) : 섹션별 데이터 분리", "impl": "X"}, {"role": "연구자", "group": "", "num": "49", "task": "Stage1 등록(자동화4) : 첨부파일 포함 콘텐츠 자동 생성 데이터", "impl": "X"}, {"role": "연구자", "group": "", "num": "50", "task": "Stage1 확정 : 스테이지 확정 제출", "impl": "X"}, {"role": "연구자", "group": "", "num": "51", "task": "Stage1 보완 : 스테이지 보완의견 작성 및 재확정", "impl": "X"}, {"role": "연구자", "group": "", "num": "52", "task": "Stage2 열람(다중) : 자문결과 조회 및 대조 (자문위원 공개범위 정보 포함)", "impl": "O"}, {"role": "연구자", "group": "", "num": "53", "task": "Stage3 등록 : 스테이지 정보 등록/수정", "impl": "O"}, {"role": "연구자", "group": "", "num": "54", "task": "Stage4 등록 : 스테이지 정보 등록/수정", "impl": "O"}, {"role": "연구자", "group": "", "num": "55", "task": "Stage3, 4 확정 : 스테이지 확정 제출", "impl": "O"}, {"role": "연구자", "group": "", "num": "56", "task": "Stage3, 4 보완 : 스테이지 보완의견 작성 및 재확정", "impl": "O"}, {"role": "연구자", "group": "", "num": "57", "task": "산출물 : 단계별/종합 산출물 pdf 제공", "impl": "O"}];
+
+const ROLE_COLORS = {
+  '범부처':    { dot:'#1A56A8', label:'#93BBFF' },
+  '대한의학회': { dot:'#0D7A74', label:'#5EEAD4' },
+  '자문위원':  { dot:'#B45309', label:'#FCD34D' },
+  '연구자':    { dot:'#166534', label:'#86EFAC' },
+};
+
+let activeRoleFilter = '전체';
+
+/* ── 과업 렌더 ── */
+function renderTasks() {
+  const data = activeRoleFilter === '전체'
+    ? TASK_DATA
+    : TASK_DATA.filter(t => t.role === activeRoleFilter);
+
+  const oCount = data.filter(t => t.impl === 'O').length;
+  const xCount = data.filter(t => t.impl === 'X').length;
+  const total  = data.length;
+
+  document.getElementById('sumO').textContent = oCount;
+  document.getElementById('sumX').textContent = xCount;
+  document.getElementById('sumTotal').textContent = total;
+  document.getElementById('sumBar').style.width = (total ? Math.round(oCount/total*100) : 0) + '%';
+
+  /* 역할별 그룹핑 */
+  const roles = [...new Set(data.map(t => t.role))];
+  const html = roles.map(role => {
+    const items = data.filter(t => t.role === role);
+    const oC = items.filter(t => t.impl === 'O').length;
+    const xC = items.filter(t => t.impl === 'X').length;
+    const col = ROLE_COLORS[role] || { dot:'#6B7280', label:'#9CA3AF' };
+
+    /* 그룹별 묶음 */
+    const groups = [...new Set(items.map(t => t.group))];
+    const rowsHtml = groups.map(group => {
+      const groupItems = items.filter(t => t.group === group);
+      const groupLabel = group ? `<div class="group-label">${group}</div>` : '';
+      const rowsInner = groupItems.map(t => `
+        <div class="task-row">
+          <span class="task-num">${t.num || '·'}</span>
+          <span class="task-text${t.impl === 'X' ? ' dimmed' : ''}">${t.task}</span>
+          <span class="impl-badge ${t.impl === 'O' ? 'impl-o' : 'impl-x'}">${t.impl}</span>
+        </div>`).join('');
+      return groupLabel + rowsInner;
+    }).join('');
+
+    return `
+      <div class="role-section">
+        <div class="role-header" onclick="toggleRole(this)">
+          <div class="role-header-left">
+            <div class="role-icon-dot" style="background:${col.dot}"></div>
+            <span class="role-name-label" style="color:${col.label}">${role}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="role-counts">
+              <span class="role-o">O ${oC}</span>
+              <span style="color:#374151;font-size:10px">/</span>
+              <span class="role-x">X ${xC}</span>
+            </div>
+            <span class="role-arrow open">›</span>
+          </div>
+        </div>
+        <div class="role-body open">${rowsHtml}</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('taskList').innerHTML = html;
+}
+
+function toggleRole(header) {
+  const arrow = header.querySelector('.role-arrow');
+  const body  = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+
+function filterTasks(btn) {
+  document.querySelectorAll('.task-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeRoleFilter = btn.dataset.role;
+  renderTasks();
+}
+
+/* ── 탭 전환 ── */
+function switchRightTab(el, id) {
+  document.querySelectorAll('.feedback-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-tasks').style.display = id === 'tasks' ? 'flex' : 'none';
+  document.getElementById('tab-tally').style.display = id === 'tally' ? 'flex' : 'none';
+}
+
+/* ── 페이지 탭 ── */
+let currentSrc = 'admin.html';
+function switchPage(el) {
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentSrc = el.dataset.src;
+  const label = el.dataset.label;
+  document.getElementById('currentPageLabel').textContent = label;
+  document.getElementById('contextPage').textContent = label;
+  document.getElementById('iframeOverlay').classList.remove('hidden');
+  document.getElementById('overlayText').textContent = '페이지 로딩중...';
+  document.getElementById('previewFrame').src = currentSrc;
+}
+function frameLoaded() { document.getElementById('iframeOverlay').classList.add('hidden'); }
+function openInNew()   { window.open(currentSrc, '_blank'); }
+
+/* ── Tally ── */
+function applyTally() {
+  let url = document.getElementById('tallyUrl').value.trim();
+  if (!url) { alert('Tally 임베드 URL을 입력해주세요.'); return; }
+  url = url.replace('tally.so/r/', 'tally.so/embed/');
+  if (!url.includes('/embed/')) {
+    const id = url.split('/').pop().split('?')[0];
+    url = 'https://tally.so/embed/' + id;
+  }
+  const finalUrl = (url.includes('?') ? url + '&' : url + '?') + 'transparentBackground=1&hideTitle=1';
+  const iframe = document.getElementById('tallyFrame');
+  iframe.src = finalUrl;
+  iframe.style.display = 'block';
+  iframe.style.flex = '1';
+  document.getElementById('setupPanel').style.display = 'none';
+  localStorage.setItem('tallyEmbedUrl', url);
+}
+(function() {
+  const saved = localStorage.getItem('tallyEmbedUrl');
+  if (saved) { document.getElementById('tallyUrl').value = saved; applyTally(); }
+})();
+
+function focusTally() {
+  switchRightTab(document.querySelectorAll('.feedback-tab')[1], 'tally');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => showToast('🔗 링크가 클립보드에 복사되었습니다'));
+}
+function showToast(msg) {
+  const t = document.getElementById('submitToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+window.addEventListener('message', e => {
+  if (e.data && e.data.event === 'Tally.FormSubmitted') showToast('✅ 피드백이 제출되었습니다. 감사합니다!');
+});
+
+/* ── 초기화 ── */
+renderTasks();
+</script>
 </body>
 </html>
