@@ -314,22 +314,7 @@ body { background: #0F1C2E; min-height: 100vh; display: flex; flex-direction: co
     <!-- ── Tally 피드백 탭 ── -->
     <div style="display:none;flex:1;flex-direction:column" id="tab-tally">
       <div class="tally-wrap">
-        <div class="setup-panel" id="setupPanel">
-          <div class="setup-icon">📋</div>
-          <div class="setup-title">Tally 피드백 폼 연결</div>
-          <div class="setup-desc">tally.so에서 폼을 만든 후<br>임베드 URL을 아래에 붙여넣으세요</div>
-          <div class="setup-steps">
-            <div class="setup-step"><div class="step-num">1</div><div><a href="https://tally.so" target="_blank" style="color:#93BBFF">tally.so</a> 접속 → 새 폼 만들기</div></div>
-            <div class="setup-step"><div class="step-num">2</div><div>권장 항목: 페이지/섹션 선택 (Dropdown) · 코멘트 (Long text) · 우선순위 (Multiple choice)</div></div>
-            <div class="setup-step"><div class="step-num">3</div><div>Share → Embed → iFrame URL 복사</div></div>
-            <div class="setup-input-row">
-              <input class="setup-input" id="tallyUrl" type="text" placeholder="https://tally.so/embed/xxxxx">
-              <button class="tb-btn primary" onclick="applyTally()">적용</button>
-            </div>
-            <div class="setup-step"><div class="step-num">4</div><div>응답 확인: tally.so → Submissions → CSV 내보내기</div></div>
-          </div>
-        </div>
-        <iframe id="tallyFrame" src="" style="display:none;flex:1;width:100%;border:none" title="피드백 폼"></iframe>
+        <iframe id="tallyFrame" src="https://tally.so/r/KY0v2M" style="display:none;flex:1;width:100%;border:none" title="피드백 폼"></iframe>
       </div>
     </div>
 
