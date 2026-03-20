@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>의료제품 설계서 운영관리 시스템 — 리뷰</title>
 <link rel="stylesheet" href="style.css">
+<script async src="https://tally.so/widgets/embed.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #0F1C2E; min-height: 100vh; display: flex; flex-direction: column; font-family: 'Noto Sans KR', sans-serif; }
@@ -231,8 +232,8 @@ body { background: #0F1C2E; min-height: 100vh; display: flex; flex-direction: co
   </div>
   <div class="top-bar-right">
     <button class="tb-btn" onclick="copyLink()">🔗 링크 복사</button>
-    <button class="tb-btn primary" onclick="focusTally()">+ 피드백 남기기</button>
-  </div>
+    <button class="tb-btn primary" data-tally-open="KY0v2M" data-tally-emoji-text="🔨" data-tally-emoji-animation="wave">+ 피드백 남기기</button>
+ </div>
 </header>
 
 <div class="split-layout">
@@ -267,8 +268,9 @@ body { background: #0F1C2E; min-height: 100vh; display: flex; flex-direction: co
       <span class="pane-label">📋 리뷰</span>
       <div class="feedback-tabs">
         <button class="feedback-tab active" onclick="switchRightTab(this,'tasks')">과업리스트</button>
-        <button class="feedback-tab" onclick="switchRightTab(this,'tally')">피드백 폼</button>
-      </div>
+        <!--<button class="feedback-tab" onclick="switchRightTab(this,'tally')">피드백 폼</button>-->
+    
+	  </div>
     </div>
 
     <!-- 컨텍스트 바 -->
@@ -312,16 +314,21 @@ body { background: #0F1C2E; min-height: 100vh; display: flex; flex-direction: co
     </div>
 
     <!-- ── Tally 피드백 탭 ── -->
+
     <div style="display:none;flex:1;flex-direction:column" id="tab-tally">
       <div class="tally-wrap">
+        <div class="setup-panel" id="setupPanel">
+            <div class="setup-input-row">
+              <input class="setup-input" id="tallyUrl" type="text" placeholder="https://tally.so/embed/xxxxx">
+              <button class="tb-btn primary" onclick="applyTally()">적용</button>
+            </div>
+        </div>
         <iframe id="tallyFrame" src="https://tally.so/r/KY0v2M" style="display:none;flex:1;width:100%;border:none" title="피드백 폼"></iframe>
       </div>
     </div>
-
   </div>
 </div>
 
-<div class="submit-toast" id="submitToast">✅ 피드백이 제출되었습니다. 감사합니다!</div>
 
 <script>
 /* ── 과업 데이터 ── */
