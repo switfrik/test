@@ -654,3 +654,12 @@ button { cursor: pointer; font-family: inherit; }
   border-radius: 7px;
   gap: 6px;
 }
+
+
+.s1-drop-item {
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: background .12s;
+}
+.s1-drop-item:hover  { background: var(--primary-lt); }
+.s1-drop-item.active { background: var(--primary-lt); }
