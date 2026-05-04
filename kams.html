@@ -46,11 +46,11 @@
   
   <nav class="sidebar-nav">
     <div class="nav-group-label">개요</div>
-    <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
+    <!--<div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
       <span class="icon">📊</span>자문 현황
-    </div>
+    </div>-->
     <div class="nav-group-label">설계서 관리</div>
-    <div class="nav-item" data-page="doc-list" onclick="showPage('doc-list')">
+    <div class="nav-item active" data-page="doc-list" onclick="showPage('doc-list')">
       <span class="icon">📄</span>설계서 목록
       <span class="nav-badge">5</span>
     </div>
@@ -84,7 +84,7 @@
   <div class="content">
 
     <!-- ══ PAGE: 대시보드 ══ -->
-    <div class="page active" id="page-dashboard">
+   <!-- <div class="page active" id="page-dashboard">
       <div class="page-header">
         <h1>자문 현황</h1>
         <p>2026 범부처 미충족의료수요 기반 의료제품 설계 사업</p>
@@ -114,10 +114,10 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>-->
 
     <!-- ══ PAGE: 설계서 목록 ══ -->
-    <div class="page" id="page-doc-list">
+    <div class="page active" id="page-doc-list">
       <div class="page-header flex-between">
         <div><h1>설계서 목록</h1><p>자문 운영 및 통합확정 관리</p></div>
       </div>
@@ -634,7 +634,7 @@
           <div style="display:flex;align-items:center;gap:10px">
             <span style="font-size:18px">📋</span>
             <div style="font-size:12.5px;line-height:1.7">
-              <strong style="color:var(--amber)">운영위원 오프라인 검토 진행 중</strong><br>
+              <strong style="color:var(--amber)">운영위원 검토 진행 중</strong><br>
               <span class="text-muted">3명 제출 완료 · 운영위원 검토의견 입력 후 재요청 발행 또는 통합확정을 진행하세요</span>
             </div>
           </div>
@@ -645,7 +645,7 @@
         </div>
 
         <!-- ── 오프라인 검토 안내 ── -->
-        <div class="notice notice-info mb-16" style="background:#F0FDF4;border-color:#86EFAC">
+        <!--<div class="notice notice-info mb-16" style="background:#F0FDF4;border-color:#86EFAC">
           <span>💡</span>
           <span style="font-size:12px">
             <strong>운영위원 검토 프로세스:</strong>
@@ -654,7 +654,7 @@
             ③ 아래 각 자문위원 카드의 <strong>[운영위원 검토의견 입력]</strong>에 결과 입력 →
             ④ 재요청 발행 또는 통합확정
           </span>
-        </div>
+        </div>-->
 
         <div class="flex-between mb-12">
           <div style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px">
@@ -665,101 +665,23 @@
         </div>
 
         <!-- ── 자문위원 카드 #1 — 김○○ ── -->
-        <div class="card mb-10" style="padding:0;overflow:hidden" id="expert-card-0">
-
-          <!-- 카드 헤더 -->
-          <div style="display:flex;align-items:center;padding:12px 18px;gap:14px;cursor:pointer" onclick="toggleReviewAccordion(0)">
-            <button class="btn btn-outline" style="font-size:14px;font-weight:700;min-width:80px" onclick="event.stopPropagation();openExpertPopup(0)">김○○</button>
+       <div class="card mb-10" style="padding:0;overflow:hidden" id="expert-card-1">
+          <div style="display:flex;align-items:center;padding:12px 18px;gap:14px;cursor:pointer">
+            <button class="btn btn-outline" style="font-size:14px;font-weight:700;min-width:80px" onclick="event.stopPropagation();openExpertPopup(1)">김○○</button>
             <div style="flex:1">
               <div style="font-size:12.5px;color:var(--text-2)">비뇨의학과 · ○○대학병원</div>
-              <div style="font-size:11px;color:var(--text-3);margin-top:2px">세부전문: 요로결석, 전립선 &nbsp;·&nbsp; 자문일: 2025.07.24~08.20</div>
+              <div style="font-size:11px;color:var(--text-3);margin-top:2px">세부전문: 전립선 &nbsp;·&nbsp; 자문일: 2025.07.24~08.20</div>
             </div>
             <div style="display:flex;align-items:center;gap:8px">
-              <span class="badge badge-green text-xs">✓ 제출완료</span>
-              <span class="badge badge-gray text-xs">v1.0</span>
-              <span style="color:var(--green);font-size:12px">영향 있음</span>
-              <span id="review-badge-0" class="badge badge-gray text-xs">검토 미입력</span>
-              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openExpertPopup(0)">의견 보기 →</button>
-              <span id="acc-arrow-0" style="font-size:14px;color:var(--text-3);transition:transform .2s;display:inline-block">▾</span>
+              <span class="badge badge-red text-xs">Χ 미제출</span>
+              <span class="badge badge-gray text-xs"> </span>
+              <span style="color:var(--amber);font-size:12px"> </span>
+              <span id="review-badge-1" class="badge badge-gray text-xs">검토 미입력</span>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openExpertPopup(1)">Stage2 보기 →</button>
+              <span id="acc-arrow-1" style="font-size:14px;color:var(--text-3);transition:transform .2s;display:inline-block">▾</span>
             </div>
           </div>
-
-          <!-- 운영위원 검토의견 입력 패널 -->
-          <div id="review-panel-0" style="display:none;border-top:1px solid var(--border);background:var(--bg-3)">
-            <div style="padding:16px 20px">
-              <div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:12px;display:flex;align-items:center;gap:6px">
-                📋 운영위원 검토의견 입력
-                <span style="font-size:10px;font-weight:400;color:var(--text-4)">(오프라인 검토 결과를 여기에 입력)</span>
-              </div>
-
-              <!-- 문항별 검토 체크리스트 -->
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-                <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:12px">
-                  <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">문항별 적절성 검토</div>
-                  <div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px">
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer">
-                      <input type="checkbox" class="review-check" data-expert="0" data-item="target"> 대상군 및 기대효과
-                    </label>
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer">
-                      <input type="checkbox" class="review-check" data-expert="0" data-item="clinical"> 임상 상황 (검사역할·검체 등)
-                    </label>
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer">
-                      <input type="checkbox" class="review-check" data-expert="0" data-item="refstd"> 참고 표준 적절성
-                    </label>
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer">
-                      <input type="checkbox" class="review-check" data-expert="0" data-item="tptn"> TP/TN/FP/FN 임상영향
-                    </label>
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer">
-                      <input type="checkbox" class="review-check" data-expert="0" data-item="unmet"> 미충족의료수요 제안
-                    </label>
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer">
-                      <input type="checkbox" class="review-check" data-expert="0" data-item="impact"> 임상 결과 영향 판단
-                    </label>
-                  </div>
-                </div>
-
-                <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:12px">
-                  <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">운영위원 종합 판정</div>
-                  <div style="display:flex;flex-direction:column;gap:7px;font-size:12.5px">
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer">
-                      <input type="radio" name="verdict-0" value="pass" onchange="updateVerdict(0,'pass')">
-                      <span style="color:var(--green);font-weight:600">✓ 적절 — 통합확정 권고</span>
-                    </label>
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer">
-                      <input type="radio" name="verdict-0" value="minor" onchange="updateVerdict(0,'minor')">
-                      <span style="color:var(--amber);font-weight:600">△ 경미한 보완 필요</span>
-                    </label>
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer">
-                      <input type="radio" name="verdict-0" value="major" onchange="updateVerdict(0,'major')">
-                      <span style="color:var(--red);font-weight:600">✕ 재작성 필요 (재요청)</span>
-                    </label>
-                  </div>
-                  <div style="margin-top:10px;font-size:11px;color:var(--text-4)">
-                    검토자: <input style="border:none;border-bottom:1px solid var(--border);background:transparent;font-size:11px;color:var(--text-2);width:70px;padding:1px 3px" placeholder="홍○○" id="reviewer-name-0">
-                    &nbsp; 날짜: <input style="border:none;border-bottom:1px solid var(--border);background:transparent;font-size:11px;color:var(--text-2);width:80px;padding:1px 3px" placeholder="2026.03.25" id="reviewer-date-0">
-                  </div>
-                </div>
-              </div>
-
-              <!-- 운영위원 검토 의견 (재요청 시 자문위원에게 전달) -->
-              <div style="margin-bottom:10px">
-                <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:6px">
-                  검토 의견 상세
-                  <span style="font-weight:400;color:var(--text-4)">(재요청 발행 시 자문위원에게 전달)</span>
-                </div>
-                <textarea class="form-textarea" id="review-comment-0" style="width:100%;min-height:80px;font-size:12.5px"
-                  placeholder="예) ① 대상군의 중증도 기준이 불명확합니다. HIV 양성 여부, MSM 여부를 구체적으로 명시해주세요.&#10;② 참고표준으로 제시하신 cobas HPV Test와의 비교 근거를 보완해주세요.&#10;③ 임상결과영향에 정량적 검증 지표(예: 조기발견율 %)를 포함해주세요."></textarea>
-              </div>
-
-              <div style="display:flex;gap:8px;justify-content:flex-end">
-                <button class="btn btn-ghost btn-sm" onclick="clearReview(0)">초기화</button>
-                <button class="btn btn-outline btn-sm" onclick="saveReview(0)">검토의견 저장</button>
-                <button class="btn btn-amber btn-sm" onclick="quickRequest(0)">이 자문위원에게 재요청 →</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
+</div>		  
         <!-- ── 자문위원 카드 #2 — 박○○ ── -->
         <div class="card mb-10" style="padding:0;overflow:hidden" id="expert-card-1">
           <div style="display:flex;align-items:center;padding:12px 18px;gap:14px;cursor:pointer" onclick="toggleReviewAccordion(1)">
@@ -773,7 +695,7 @@
               <span class="badge badge-gray text-xs">v1.0</span>
               <span style="color:var(--amber);font-size:12px">영향 없음</span>
               <span id="review-badge-1" class="badge badge-gray text-xs">검토 미입력</span>
-              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openExpertPopup(1)">의견 보기 →</button>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openExpertPopup(1)">Stage2 보기 →</button>
               <span id="acc-arrow-1" style="font-size:14px;color:var(--text-3);transition:transform .2s;display:inline-block">▾</span>
             </div>
           </div>
@@ -781,17 +703,6 @@
             <div style="padding:16px 20px">
               <div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:12px;display:flex;align-items:center;gap:6px">📋 운영위원 검토의견 입력</div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-                <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:12px">
-                  <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:8px">문항별 적절성 검토</div>
-                  <div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px">
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" class="review-check" data-expert="1" data-item="target"> 대상군 및 기대효과</label>
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" class="review-check" data-expert="1" data-item="clinical"> 임상 상황</label>
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" class="review-check" data-expert="1" data-item="refstd"> 참고 표준 적절성</label>
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" class="review-check" data-expert="1" data-item="tptn"> TP/TN/FP/FN</label>
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" class="review-check" data-expert="1" data-item="unmet"> 미충족의료수요</label>
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" class="review-check" data-expert="1" data-item="impact"> 임상 결과 영향</label>
-                  </div>
-                </div>
                 <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:12px">
                   <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:8px">운영위원 종합 판정</div>
                   <div style="display:flex;flex-direction:column;gap:7px;font-size:12.5px">
@@ -805,10 +716,62 @@
                   </div>
                 </div>
               </div>
-              <div style="margin-bottom:10px">
-                <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:6px">검토 의견 상세 <span style="font-weight:400;color:var(--text-4)">(재요청 시 자문위원에게 전달)</span></div>
+             
+			 <div style="margin-bottom:10px">
+                <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:6px">1. 기본 정보</div>
+                    <!-- 보완 기한 -->
+					<div class="mb-12" style="display:flex;gap:12px;align-items:center">
+					  <div style="flex:1">
+						<div class="form-label mb-4">보완 기한</div>
+						<input class="form-input" type="date" id="request-deadline" style="width:100%">
+					  </div>
+					  <div style="flex:1">
+						<div class="form-label mb-4">재요청 차수</div>
+						<select class="form-select" style="width:100%">
+						  <option>1차 재요청 (v1.0 → v2.0)</option>
+						  <option>2차 재요청 (v2.0 → v3.0)</option>
+						  <option>3차 재요청 (v3.0 → v4.0)</option>
+						</select>
+					  </div>
+					</div>
+				</div>
+
+			 <div style="margin-bottom:10px">
+                <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:6px">2. 자문위원이 제안하는 대상군의 개요</div>
                 <textarea class="form-textarea" id="review-comment-1" style="width:100%;min-height:80px;font-size:12.5px" placeholder="보완 요청 사항을 구체적으로 작성하세요..."></textarea>
               </div>
+			  
+			  <div style="margin-bottom:10px">
+                <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:6px">3. 대상군의 구체적인 임상상황 <span style="font-weight:400;color:var(--text-4)">(재요청 시 자문위원에게 전달)</span></div>
+                <textarea class="form-textarea" id="review-comment-1" style="width:100%;min-height:80px;font-size:12.5px" placeholder="보완 요청 사항을 구체적으로 작성하세요..."></textarea>
+              </div>
+			  
+			    <div style="margin-bottom:10px">
+                <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:6px">4.참고 표준에 대한 자문(*IVD에만 해당합니다)</div>
+                <textarea class="form-textarea" id="review-comment-1" style="width:100%;min-height:80px;font-size:12.5px" placeholder="보완 요청 사항을 구체적으로 작성하세요..."></textarea>
+              </div>
+			  
+			    <div style="margin-bottom:10px">
+                <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:6px">5. 현재 의료상황에서 적용되고 있는 의료제품 또는 의료행위</div>
+                <textarea class="form-textarea" id="review-comment-1" style="width:100%;min-height:80px;font-size:12.5px" placeholder="보완 요청 사항을 구체적으로 작성하세요..."></textarea>
+              </div>
+			  
+			    <div style="margin-bottom:10px">
+                <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:6px">6.체외진단검사 결과에 따라 예상되는 임상 영향(*IVD에만 해당합니다)</div>
+                <textarea class="form-textarea" id="review-comment-1" style="width:100%;min-height:80px;font-size:12.5px" placeholder="보완 요청 사항을 구체적으로 작성하세요..."></textarea>
+              </div>
+			  
+			    <div style="margin-bottom:10px">
+                <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:6px">7.자문위원이 제안하는 미충족의료수요</div>
+                <textarea class="form-textarea" id="review-comment-1" style="width:100%;min-height:80px;font-size:12.5px" placeholder="보완 요청 사항을 구체적으로 작성하세요..."></textarea>
+              </div>
+			  
+			    <div style="margin-bottom:10px">
+                <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:6px">8.미충족의료수요 해결에 따른 임상 결과 영향</div>
+                <textarea class="form-textarea" id="review-comment-1" style="width:100%;min-height:80px;font-size:12.5px" placeholder="보완 요청 사항을 구체적으로 작성하세요..."></textarea>
+              </div>
+			  
+			  
               <div style="display:flex;gap:8px;justify-content:flex-end">
                 <button class="btn btn-ghost btn-sm" onclick="clearReview(1)">초기화</button>
                 <button class="btn btn-outline btn-sm" onclick="saveReview(1)">검토의견 저장</button>
@@ -831,7 +794,7 @@
               <span class="badge badge-gray text-xs">v1.0</span>
               <span style="color:var(--green);font-size:12px">영향 있음</span>
               <span id="review-badge-2" class="badge badge-gray text-xs">검토 미입력</span>
-              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openExpertPopup(2)">의견 보기 →</button>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openExpertPopup(2)">Stage2 보기 →</button>
               <span id="acc-arrow-2" style="font-size:14px;color:var(--text-3);transition:transform .2s;display:inline-block">▾</span>
             </div>
           </div>
@@ -1614,6 +1577,23 @@ function openExpertPopup(idx) {
   expertPopupWin = window.open(
     url,
     'expertOpinionPopup',
+    `width=${w},height=${h},left=${left},top=${top},` +
+    `resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no`
+  );
+}
+
+/* ── 검토의견서 팝업 호출 ── */
+let kamsPopupWin = null;
+
+function openKamsReview(idx) {
+  const url = `popup_stage2_review.html?idx=${idx}`;
+  const w = 900, h = 700;
+  const left = Math.round(window.screenX + (window.outerWidth - w) / 2);
+  const top  = Math.round(window.screenY + (window.outerHeight - h) / 2);
+
+  kamsPopupWin = window.open(
+    url,
+    'kamsReviewPopup',
     `width=${w},height=${h},left=${left},top=${top},` +
     `resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no`
   );

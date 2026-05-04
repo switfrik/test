@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>— Stage 2 검토의견서 작성</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── 팝업 전용 레이아웃 ── */
+body {
+  background: var(--bg);
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 팝업 헤더 */
+.popup-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-2);
+  border-bottom: 2px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+.popup-header-left { display: flex; flex-direction: column; gap: 4px; }
+.popup-header-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.popup-header-meta {
+  font-size: 12px;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.popup-header-right { display: flex; align-items: center; gap: 8px; }
+.popup-close {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-3);
+  transition: all .14s;
+}
+.popup-close:hover { background: var(--red-lt); color: var(--red); border-color: #FECACA; }
+
+/* 본문 */
+.popup-body {
+  flex: 1;
+  padding: 24px;
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* 자문위원 정보 카드 */
+.expert-info-card {
+  background: var(--primary-lt);
+  border: 1.5px solid #BFDBFE;
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px 16px;
+}
+.ei-item { display: flex; flex-direction: column; gap: 3px; }
+.ei-label { font-size: 10px; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.ei-value { font-size: 13px; color: var(--text-1); font-weight: 500; }
+
+/* 섹션 구분선 */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 12px;
+}
+.section-divider-line { flex: 1; height: 1px; background: var(--border); }
+.section-divider-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  white-space: nowrap;
+}
+
+/* 읽기전용 행 */
+.ro-grid {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.ro-label {
+  padding: 9px 14px;
+  background: var(--bg-3);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  display: flex;
+  align-items: flex-start;
+  padding-top: 10px;
+}
+.ro-label:last-of-type { border-bottom: none; }
+.ro-value {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-2);
+  line-height: 1.7;
+}
+.ro-value:last-child { border-bottom: none; }
+
+/* 현행 의료기기 테이블 */
+.device-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 12px; }
+.device-table th { background: var(--bg-3); padding: 8px 10px; border: 1px solid var(--border); text-align: left; font-size: 11px; color: var(--text-3); font-weight: 700; }
+.device-table td { padding: 8px 10px; border: 1px solid var(--border); color: var(--text-2); }
+.device-table tr:nth-child(even) td { background: var(--bg-3); }
+
+/* 임상영향 */
+.impact-radio {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+.impact-radio label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+/* 네비게이션 바 (이전/다음 자문위원) */
+.popup-nav {
+  position: sticky;
+  bottom: 0;
+  background: var(--bg-2);
+  border-top: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -2px 8px rgba(0,0,0,.06);
+}
+.nav-expert-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-expert-btn {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-2);
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all .13s;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 500;
+}
+.nav-expert-btn:hover { border-color: var(--primary); color: var(--primary); }
+.nav-expert-btn.current {
+  border-color: var(--primary);
+  background: var(--primary-lt);
+  color: var(--primary);
+  font-weight: 700;
+}
+</style>
+</head>
+<body>
+
+<!-- 팝업 헤더 -->
+<header class="popup-header">
+  <div class="popup-header-left">
+    <div class="popup-header-title">
+      <span class="stage-badge stage-s2">Stage 2</span>
+      <span id="expertName">검토의견서 작성</span>
+    </div>
+    <div class="popup-header-meta">
+      <span class="type-ivd">IVD</span>
+      <span>HPV 소변 검출 시스템 (MassARRAY)</span>
+      <span style="color:var(--border)">|</span>
+      <span id="expertDate">작성일: 2026.09.24 (ver.1.0.0)</span>
+    </div>
+  </div>
+  <div class="popup-header-right">
+    <button class="btn btn-outline btn-sm" onclick="window.print()">🖨 인쇄</button>
+    <button class="popup-close" onclick="window.close()" title="닫기">✕</button>
+  </div>
+</header>
+
+<!-- 본문 -->
+<main class="popup-body" id="popupBody">
+
+ <!-- 자문위원 기본정보 -->
+ <div class="form-group full"><label class="form-label">1. 검토 기본 정보</label>
+
+    <!-- 보완 기한 -->
+    <div class="mb-12" style="display:flex;gap:12px;align-items:center">
+      <div style="flex:1">
+        <div class="form-label mb-4">보완 기한</div>
+        <input class="form-input" type="date" id="request-deadline" style="width:100%">
+      </div>
+      <div style="flex:1">
+        <div class="form-label mb-4">재요청 차수</div>
+        <select class="form-select" style="width:100%">
+          <option>1차 재요청 (v1.0 → v2.0)</option>
+          <option>2차 재요청 (v2.0 → v3.0)</option>
+          <option>3차 재요청 (v3.0 → v4.0)</option>
+        </select>
+      </div>
+    </div>
+  <div class="expert-info-card" id="expertInfoCard">
+    <div class="ei-item"><div class="ei-label">검토자</div><div class="ei-value" id="ei-name">김○○</div></div>
+    <div class="ei-item"><div class="ei-label">검토날짜</div><div class="ei-value" id="ei-affil">2026.00.00</div></div>
+    <div class="ei-item"><div class="ei-label">소속</div><div class="ei-value" id="ei-dept">의공학과</div></div>
+    <div class="ei-item"><div class="ei-label">세부전문</div><div class="ei-value" id="ei-special">의료기기 허가</div></div>
+    
+    </div>
+  </div>
+
+  <!-- 검토의견 항목 -->
+
+  <div class="form-group full"><label class="form-label">2. 자문위원이 제안하는 대상군의 개요</label><textarea class="form-textarea"></textarea></div>
+  <div class="section-divider">
+  </div>
+
+  <div class="form-group full"><label class="form-label">3. 대상군의 구체적인 임상상황</label><textarea class="form-textarea"></textarea></div>
+  <div class="section-divider">
+  </div>
+
+  <div class="form-group full"><label class="form-label">4.참고 표준에 대한 자문(<span class="req">*</span>IVD에만 해당합니다)</label><textarea class="form-textarea"></textarea></div>
+  <div class="section-divider">
+  </div>
+
+  <div class="form-group full"><label class="form-label">5. 현재 의료상황에서 적용되고 있는 의료제품 또는 의료행위</label><textarea class="form-textarea"></textarea></div>
+  <div class="section-divider">
+  </div>
+
+  <div class="form-group full"><label class="form-label">6.체외진단검사 결과에 따라 예상되는 임상 영향(<span class="req">*</span>IVD에만 해당합니다)</label><textarea class="form-textarea"></textarea></div>
+  <div class="section-divider">
+  </div>
+
+  <div class="form-group full"><label class="form-label">7.자문위원이 제안하는 미충족의료수요</label><textarea class="form-textarea"></textarea></div>
+  <div class="section-divider">
+  </div>
+
+  <div class="form-group full"><label class="form-label">8.미충족의료수요 해결에 따른 임상 결과 영향</label><textarea class="form-textarea"></textarea></div>
+  <div class="section-divider">
+  </div>
+
+
+ <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-outline">임시 저장</button>
+        <button class="btn btn-primary" onclick="openModal('submitModal')">확정 제출</button>
+      </div>
+
+</main>
+
+<!-- 하단 네비게이션 (Stage 이동 -->
+<!--<footer class="popup-nav">
+  <button class="btn btn-outline btn-sm" id="btnPrev" onclick="location.href='popup_stage1.html'">‹ Stage1</button>
+  <div class="nav-expert-list" id="navExpertList"></div>
+  <button class="btn btn-outline btn-sm"  onclick="location.href='popup_stage3.html'">Stage3 ›</button>
+</footer>-->
+
+
+</body>
+</html>
