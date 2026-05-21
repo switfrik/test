@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메뉴 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet" crossorigin>
+<style>
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --bg:           #f5f6f8;
+  --surface:      #ffffff;
+  --surface2:     #f0f1f4;
+  --border:       #e2e4ea;
+  --border2:      #d0d3dc;
+  --text:         #1a1c23;
+  --text-muted:   #6b7080;
+  --text-dim:     #aeb3c0;
+  --accent:       #3b6ff5;
+  --accent-bg:    #eef2fe;
+  --accent-text:  #1e4dd8;
+  --danger:       #e84040;
+  --shadow-sm:    0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:    0 4px 16px rgba(0,0,0,.10), 0 1px 4px rgba(0,0,0,.06);
+  --r:            8px;
+  --r-sm:         5px;
+  --font:         'Pretendard', -apple-system, 'Malgun Gothic', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+/* ─────────────────────────────────────────
+   TOP NAV
+───────────────────────────────────────── */
+.topnav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: stretch;
+  height: 52px;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 200;
+  padding: 0 4px;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 18px 0 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -.02em;
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+.nav-logo-mark {
+  width: 26px; height: 26px;
+  background: var(--accent);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.nav-logo-mark svg { color: #fff; }
+
+/* Tab items */
+.nav-tabs {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  font-family: var(--font);
+  font-size: 23.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  transition: color .15s;
+  border-bottom: 2px solid transparent;
+}
+.nav-btn:hover { color: var(--text); }
+.nav-btn.active { color: var(--accent-text); border-bottom-color: var(--accent); }
+.nav-btn .caret {
+  font-size: 9px;
+  opacity: .5;
+  transition: transform .15s;
+}
+.nav-item.open .nav-btn .caret { transform: rotate(180deg); }
+
+/* Dropdown */
+.dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  min-width: 210px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-md);
+  z-index: 300;
+  padding: 4px;
+  animation: fadeDown .12s ease;
+}
+.nav-item.open .dropdown { display: block; }
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.dd-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  border-radius: var(--r-sm);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background .12s, color .12s;
+  white-space: nowrap;
+}
+.dd-item:hover { background: var(--accent-bg); color: var(--accent-text); }
+.dd-item.active { background: var(--accent-bg); color: var(--accent-text); }
+.dd-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .4;
+  flex-shrink: 0;
+}
+.dd-item.active .dd-dot { opacity: 1; }
+.dd-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 3px 8px;
+}
+
+/* nav right side */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  flex-shrink: 0;
+}
+
+.nav-icon-btn {
+  width: 32px; height: 32px;
+  border-radius: var(--r-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: background .12s, color .12s;
+}
+.nav-icon-btn:hover { background: var(--surface2); color: var(--text); }
+.nav-icon-btn.active { background: var(--accent-bg); color: var(--accent-text); }
+
+/* ─────────────────────────────────────────
+   BREADCRUMB
+───────────────────────────────────────── */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  font-size: 12px;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.bc-sep { opacity: .4; }
+.bc-cur { color: var(--text-muted); font-weight: 500; }
+
+/* ─────────────────────────────────────────
+   BODY LAYOUT
+───────────────────────────────────────── */
+.body-wrap {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ─────────────────────────────────────────
+   SIDEBAR (optional)
+───────────────────────────────────────── */
+.sidebar {
+  width: 220px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+  overflow-y: auto;
+  padding: 10px 8px;
+  display: none; /* shown via JS */
+}
+.sidebar.visible { display: block; }
+
+.sb-section { margin-bottom: 4px; }
+.sb-group {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 8px 10px 4px;
+}
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.sb-item:hover { background: var(--surface2); color: var(--text); }
+.sb-item.active { background: var(--accent-bg); color: var(--accent-text); }
+.sb-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .4;
+  flex-shrink: 0;
+}
+.sb-item.active .sb-dot { opacity: 1; }
+
+/* ─────────────────────────────────────────
+   CONTENT / IFRAME
+───────────────────────────────────────── */
+.content {
+  flex: 1;
+  position: relative;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+#mainFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: #fff;
+}
+
+/* Welcome screen */
+.welcome {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-muted);
+}
+.welcome-icon {
+  width: 56px; height: 56px;
+  background: var(--surface2);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 4px;
+}
+.welcome h2 { font-size: 16px; font-weight: 600; color: var(--text); }
+.welcome p { font-size: 13px; color: var(--text-muted); text-align: center; line-height: 1.6; }
+
+/* Loading overlay */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.loading-overlay.visible { opacity: 1; pointer-events: all; }
+.spinner {
+  width: 28px; height: 28px;
+  border: 2.5px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media (max-width: 640px) {
+  .nav-logo span { display: none; }
+  .nav-btn { padding: 0 10px; font-size: 13px; }
+  .sidebar { width: 180px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     메뉴 설정 ← 여기를 편집하세요
+     ════════════════════════════════════════
+  각 메뉴 항목은 아래 두 가지 형태 중 하나:
+
+  1. 단일 링크:
+     { label: '메뉴명', url: 'https://...' }
+
+  2. 드롭다운 그룹:
+     { label: '그룹명', children: [
+         { label: '항목명', url: 'https://...' },
+         { divider: true },   ← 구분선
+         ...
+       ]
+     }
+  ════════════════════════════════════════ -->
+
+<script>
+const MENU = [
+  /*{
+    label: '외부 링크',
+    children: [
+      { label: 'Notion',            url: 'https://docs.google.com/spreadsheets/d/1pobcI9W72hPuRidfFUEM7UMiveZmv1Ldutan-Zj0670/edit' },
+      { label: 'Figma',             url: 'https://figma.com' },
+      { divider: true },
+      { label: 'GitHub',            url: 'https://github.com' },
+    ]
+  },*/
+  { label: '1. 시범과제 설계서 담당 위원',  url: 'https://docs.google.com/spreadsheets/d/1pobcI9W72hPuRidfFUEM7UMiveZmv1Ldutan-Zj0670/edit?gid=0#gid=0' },
+  { label: '2. 자문협의체 구성 보강',    url: 'https://docs.google.com/spreadsheets/d/1pobcI9W72hPuRidfFUEM7UMiveZmv1Ldutan-Zj0670/edit?gid=439350151#gid=439350151' },
+   { label: '(참고)2026범부처RFP목록',    url: 'https://docs.google.com/spreadsheets/d/1pobcI9W72hPuRidfFUEM7UMiveZmv1Ldutan-Zj0670/edit?gid=1201968033#gid=1201968033' },
+];
+
+// 타이틀
+const SITE_TITLE = '내 대시보드';
+
+// ▼ 페이지 로드 시 처음에 보여줄 메뉴 항목
+//   MENU 배열 기준: { navIndex: 메뉴 순서(0부터), label: '항목명' }
+//   없애려면 null 로 변경
+const DEFAULT_ITEM = { navIndex: 0, label: '1. 시범과제 설계서 담당 위원' };
+
+</script>
+
+<!-- ═══════════════════ TOP NAV ═══════════════════ -->
+<nav class="topnav" id="topnav">
+  <div class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+    </div>
+    <span id="siteTitle"></span>
+  </div>
+
+  <div class="nav-tabs" id="navTabs"></div>
+
+  <div class="nav-right">
+    <button class="nav-icon-btn" id="sidebarToggle" title="사이드바 토글">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <line x1="9" y1="3" x2="9" y2="21"/>
+      </svg>
+    </button>
+    <button class="nav-icon-btn" id="reloadBtn" title="새로고침">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="23 4 23 10 17 10"/>
+        <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+      </svg>
+    </button>
+    <button class="nav-icon-btn" id="newTabBtn" title="새 탭에서 열기">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+        <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb" id="breadcrumb">
+  <span id="siteTitle2"></span>
+  <span class="bc-sep">›</span>
+  <span class="bc-cur" id="bcCur">  메뉴를 선택하세요</span>
+</div>
+
+<!-- BODY -->
+<div class="body-wrap">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <div class="content">
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+      </div>
+      <h2>메뉴를 선택하세요</h2>
+	      <p>상단 메뉴를 클릭하면<br>이 영역에 페이지가 표시됩니다</p>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+    </div>
+
+    <iframe id="mainFrame" style="display:none;" title="콘텐츠 프레임"></iframe>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+document.getElementById('siteTitle').textContent  = SITE_TITLE;
+document.getElementById('siteTitle2').textContent = SITE_TITLE;
+
+let currentUrl   = null;
+let currentLabel = null;
+let sidebarOpen  = false;
+
+/* ── Build nav tabs ── */
+const navTabs = document.getElementById('navTabs');
+const sidebar  = document.getElementById('sidebar');
+
+MENU.forEach((item, i) => {
+  const navItem = document.createElement('div');
+  navItem.className = 'nav-item';
+  navItem.dataset.index = i;
+
+  if (!item.children) {
+    /* Single link */
+    const btn = document.createElement('button');
+    btn.className = 'nav-btn';
+    btn.textContent = item.label;
+    btn.addEventListener('click', () => {
+      closeAllDropdowns();
+      activateUrl(item.url, item.label, i);
+    });
+    navItem.appendChild(btn);
+  } else {
+    /* Dropdown group */
+    const btn = document.createElement('button');
+    btn.className = 'nav-btn';
+    btn.innerHTML = `${item.label} <span class="caret">▾</span>`;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = navItem.classList.contains('open');
+      closeAllDropdowns();
+      if (!isOpen) navItem.classList.add('open');
+    });
+
+    const dd = document.createElement('div');
+    dd.className = 'dropdown';
+
+    item.children.forEach(child => {
+      if (child.divider) {
+        const div = document.createElement('div');
+        div.className = 'dd-divider';
+        dd.appendChild(div);
+      } else {
+        const ddItem = document.createElement('div');
+        ddItem.className = 'dd-item';
+        ddItem.innerHTML = `<span class="dd-dot"></span>${child.label}`;
+        ddItem.dataset.url   = child.url;
+        ddItem.dataset.label = child.label;
+        ddItem.dataset.parent = item.label;
+        ddItem.addEventListener('click', () => {
+          closeAllDropdowns();
+          activateUrl(child.url, child.label, i, item.label);
+        });
+        dd.appendChild(ddItem);
+      }
+    });
+
+    navItem.appendChild(btn);
+    navItem.appendChild(dd);
+  }
+
+  navTabs.appendChild(navItem);
+});
+
+/* ── Build sidebar ── */
+MENU.forEach((item, i) => {
+  if (!item.children) {
+    const sec = document.createElement('div');
+    sec.className = 'sb-section';
+    const sbItem = document.createElement('div');
+    sbItem.className = 'sb-item';
+    sbItem.innerHTML = `<span class="sb-dot"></span>${item.label}`;
+    sbItem.addEventListener('click', () => activateUrl(item.url, item.label, i));
+    sec.appendChild(sbItem);
+    sidebar.appendChild(sec);
+  } else {
+    const sec = document.createElement('div');
+    sec.className = 'sb-section';
+    const grp = document.createElement('div');
+    grp.className = 'sb-group';
+    grp.textContent = item.label;
+    sec.appendChild(grp);
+    item.children.forEach(child => {
+      if (child.divider) return;
+      const sbItem = document.createElement('div');
+      sbItem.className = 'sb-item';
+      sbItem.innerHTML = `<span class="sb-dot"></span>${child.label}`;
+      sbItem.dataset.url   = child.url;
+      sbItem.addEventListener('click', () => activateUrl(child.url, child.label, i, item.label));
+      sec.appendChild(sbItem);
+    });
+    sidebar.appendChild(sec);
+  }
+});
+
+/* ══════════════════════════════════════
+   CORE ACTIONS
+══════════════════════════════════════ */
+function activateUrl(url, label, navIndex, parentLabel) {
+  if (!url) return;
+  currentUrl   = url;
+  currentLabel = label;
+
+  /* breadcrumb */
+  document.getElementById('bcCur').textContent =
+    parentLabel ? `${parentLabel}  ›  ${label}` : label;
+
+  /* nav active states */
+  document.querySelectorAll('.nav-btn').forEach((b, bi) => {
+    b.classList.toggle('active', bi === navIndex);
+  });
+  document.querySelectorAll('.dd-item').forEach(d => {
+    d.classList.toggle('active', d.dataset.label === label);
+  });
+  document.querySelectorAll('.sb-item').forEach(s => {
+    s.classList.toggle('active', s.dataset.url === url);
+  });
+
+  /* load iframe */
+  loadFrame(url);
+}
+
+function loadFrame(url) {
+  const frame    = document.getElementById('mainFrame');
+  const welcome  = document.getElementById('welcome');
+  const loading  = document.getElementById('loadingOverlay');
+
+  welcome.style.display  = 'none';
+  loading.classList.add('visible');
+  frame.style.display    = 'none';
+
+  frame.onload = () => {
+    loading.classList.remove('visible');
+    frame.style.display = 'block';
+  };
+  frame.src = url;
+}
+
+/* ══════════════════════════════════════
+   HELPERS
+══════════════════════════════════════ */
+function closeAllDropdowns() {
+  document.querySelectorAll('.nav-item.open').forEach(el => el.classList.remove('open'));
+}
+
+document.addEventListener('click', closeAllDropdowns);
+
+/* sidebar toggle */
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  sidebarOpen = !sidebarOpen;
+  sidebar.classList.toggle('visible', sidebarOpen);
+  document.getElementById('sidebarToggle').classList.toggle('active', sidebarOpen);
+});
+
+/* reload */
+document.getElementById('reloadBtn').addEventListener('click', () => {
+  if (currentUrl) loadFrame(currentUrl);
+});
+
+/* new tab */
+document.getElementById('newTabBtn').addEventListener('click', () => {
+  if (currentUrl) window.open(currentUrl, '_blank');
+});
+
+/* ── 초기 페이지 자동 로드 ── */
+if (DEFAULT_ITEM) {
+  const targetMenu = MENU[DEFAULT_ITEM.navIndex];
+  if (targetMenu) {
+    if (!targetMenu.children) {
+      activateUrl(targetMenu.url, targetMenu.label, DEFAULT_ITEM.navIndex);
+    } else {
+      const child = targetMenu.children.find(c => !c.divider && c.label === DEFAULT_ITEM.label);
+      if (child) activateUrl(child.url, child.label, DEFAULT_ITEM.navIndex, targetMenu.label);
+    }
+  }
+}
+</script>
+</body>
+</html>
